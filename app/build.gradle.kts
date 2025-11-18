@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.google.services)
 }
 
@@ -56,7 +57,6 @@ dependencies {
     // Jetpack Compose (BOM) & UI
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.compose)
-    implementation("androidx.compose.material:material-icons-extended")
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     // Compose Navigation

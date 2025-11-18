@@ -1,12 +1,19 @@
 package com.example.pixelbit.presentation.navigation
 
-sealed class Screen(val route: String) {
-    data object SignUp : Screen("sign_up")
-    data object Verification : Screen("verification/{email}") {
-        fun createRoute(email: String) = "verification/$email"
-    }
-    data object SignIn : Screen("sign_in")
-    data object Home : Screen("home")
+import kotlinx.serialization.Serializable
+
+sealed class Screen {
+    @Serializable
+    data object SignUp : Screen()
+
+    @Serializable
+    data class Verification(val email: String) : Screen()
+
+    @Serializable
+    data object SignIn : Screen()
+
+    @Serializable
+    data object Home : Screen()
 }
 
 
