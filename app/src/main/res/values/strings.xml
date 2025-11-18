@@ -1,3 +1,68 @@
 <resources>
     <string name="app_name">Pixelbit</string>
+
+    <!-- Sign Up Screen -->
+    <string name="create_account">Create Account</string>
+    <string name="sign_up_to_get_started">Sign up to get started</string>
+    <string name="full_name">Full Name</string>
+    <string name="enter_your_full_name">Enter your full name</string>
+    <string name="email">Email</string>
+    <string name="enter_your_email">Enter your email</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="enter_your_phone_number">Enter your phone number</string>
+    <string name="password">Password</string>
+    <string name="enter_your_password">Enter your password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="re_enter_your_password">Re-enter your password</string>
+    <string name="i_agree_to_terms">I agree to the Terms and Conditions</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="already_have_account">Already have an account?</string>
+    <string name="sign_in">Sign In</string>
+    <string name="password_must_be_at_least_6_characters">Password must be at least 6 characters</string>
+    <string name="passwords_do_not_match">Passwords do not match</string>
+    <string name="hide_password">Hide password</string>
+    <string name="show_password">Show password</string>
+
+    <!-- Verification Screen -->
+    <string name="email_verification">Email Verification</string>
+    <string name="verify_your_email">Verify Your Email</string>
+    <string name="we_sent_verification_link">We\'ve sent a verification link to:</string>
+    <string name="check_email_and_verify">Please check your email and click the verification link. After verifying, click the button below to continue.</string>
+    <string name="i_verified_my_email">I\'ve Verified My Email</string>
+    <string name="resend_verification_email">Resend Verification Email</string>
+    <string name="resend_available_in">Resend available in %ds</string>
+    <string name="back_to_sign_in">Back to Sign In</string>
+    <string name="didnt_receive_email">Didn\'t receive the email? Check your spam folder or try resending.</string>
+
+    <!-- Content Descriptions -->
+    <string name="full_name_icon">Full Name</string>
+    <string name="email_icon">Email</string>
+    <string name="phone_number_icon">Phone Number</string>
+    <string name="password_icon">Password</string>
+    <string name="confirm_password_icon">Confirm Password</string>
+    <string name="email_verification_icon">Email Verification</string>
+
+    <!-- Validation Messages -->
+    <string name="enter_full_name_at_least_2_chars">Please enter your full name (at least 2 characters)</string>
+    <string name="enter_first_and_last_name">Please enter your full name (first and last name)</string>
+    <string name="enter_email_address">Please enter your email address</string>
+    <string name="enter_valid_email">Please enter a valid email address</string>
+    <string name="enter_password">Please enter a password</string>
+    <string name="password_too_short">Password must be at least 6 characters long</string>
+    <string name="password_too_long">Password is too long (max 50 characters)</string>
+    <string name="password_must_contain_number">Password must contain at least one number</string>
+    <string name="password_must_contain_letter">Password must contain at least one letter</string>
+    <string name="confirm_password_required">Please confirm your password</string>
+    <string name="passwords_must_match">Passwords do not match</string>
+    <string name="agree_to_terms_required">Please agree to the Terms and Conditions</string>
+
+    <!-- Error Messages -->
+    <string name="failed_to_create_user">Failed to create user</string>
+    <string name="unknown_error">Unknown error occurred</string>
+    <string name="no_user_logged_in">No user logged in</string>
+    <string name="failed_to_send_verification_email">Failed to send verification email</string>
+    <string name="failed_to_check_verification_status">Failed to check verification status</string>
+    <string name="failed_to_sign_in">Failed to sign in</string>
+    <string name="failed_to_delete_user">Failed to delete user</string>
+    <string name="email_not_verified_yet">Email not verified yet. Please check your inbox.</string>
 </resources>

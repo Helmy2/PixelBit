@@ -12,10 +12,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.pixelbit.R
 import com.example.pixelbit.ui.theme.PixelbitTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -86,7 +88,7 @@ fun VerificationScreenContent(
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = { Text("Email Verification") }
+                title = { Text(stringResource(R.string.email_verification)) }
             )
         }
     ) { padding ->
@@ -101,7 +103,7 @@ fun VerificationScreenContent(
         ) {
                 Icon(
                     imageVector = Icons.Default.Email,
-                    contentDescription = "Email Verification",
+                    contentDescription = stringResource(R.string.email_verification_icon),
                     modifier = Modifier
                         .size(80.dp)
                         .padding(bottom = 24.dp),
@@ -109,14 +111,14 @@ fun VerificationScreenContent(
                 )
 
                 Text(
-                    text = "Verify Your Email",
+                    text = stringResource(R.string.verify_your_email),
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(bottom = 16.dp)
                 )
 
                 Text(
-                    text = "We've sent a verification link to:",
+                    text = stringResource(R.string.we_sent_verification_link),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
@@ -141,7 +143,7 @@ fun VerificationScreenContent(
                 }
 
                 Text(
-                    text = "Please check your email and click the verification link. After verifying, click the button below to continue.",
+                    text = stringResource(R.string.check_email_and_verify),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
@@ -179,7 +181,7 @@ fun VerificationScreenContent(
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
-                                "I've Verified My Email",
+                                stringResource(R.string.i_verified_my_email),
                                 style = MaterialTheme.typography.titleMedium
                             )
                         }
@@ -194,7 +196,7 @@ fun VerificationScreenContent(
                         enabled = isButtonEnabled
                     ) {
                         Text(
-                            "Resend Verification Email",
+                            stringResource(R.string.resend_verification_email),
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.SemiBold
                         )
@@ -206,7 +208,7 @@ fun VerificationScreenContent(
                         shape = MaterialTheme.shapes.small
                     ) {
                         Text(
-                            text = "Resend available in ${state.resendCountdown}s",
+                            text = stringResource(R.string.resend_available_in, state.resendCountdown),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSecondaryContainer,
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
@@ -240,7 +242,7 @@ fun VerificationScreenContent(
                     enabled = isButtonEnabled
                 ) {
                     Text(
-                        "Back to Sign In",
+                        stringResource(R.string.back_to_sign_in),
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
@@ -248,7 +250,7 @@ fun VerificationScreenContent(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Didn't receive the email? Check your spam folder or try resending.",
+                    text = stringResource(R.string.didnt_receive_email),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center

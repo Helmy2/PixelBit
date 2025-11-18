@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -29,6 +30,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.pixelbit.R
 import com.example.pixelbit.ui.theme.PixelbitTheme
 import org.koin.androidx.compose.koinViewModel
 
@@ -121,19 +123,17 @@ fun SignUpScreenContent(
             ) {
 
                 Text(
-                    text = "Create Account",
+                    text = stringResource(R.string.create_account),
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 16.dp, bottom = 8.dp),
                     textAlign = TextAlign.Start
-
-
                 )
 
                 Text(
-                    text = "Sign up to get started",
+                    text = stringResource(R.string.sign_up_to_get_started),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Start,
@@ -142,9 +142,8 @@ fun SignUpScreenContent(
 
                 Spacer(modifier = Modifier.height(32.dp))
 
-
                 Text(
-                    text = "Full Name",
+                    text = stringResource(R.string.full_name),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
@@ -165,11 +164,11 @@ fun SignUpScreenContent(
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Person,
-                            contentDescription = "Full Name",
+                            contentDescription = stringResource(R.string.full_name_icon),
                             tint = Color(0xFF514EB7)
                         )
                     },
-                    placeholder = { Text("Enter your full name") },
+                    placeholder = { Text(stringResource(R.string.enter_your_full_name)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     enabled = !state.isLoading,
@@ -183,9 +182,8 @@ fun SignUpScreenContent(
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-
                 Text(
-                    text = "Email",
+                    text = stringResource(R.string.email),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
@@ -207,11 +205,11 @@ fun SignUpScreenContent(
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Email,
-                            contentDescription = "Email",
+                            contentDescription = stringResource(R.string.email_icon),
                             tint = Color(0xFF514EB7)
                         )
                     },
-                    placeholder = { Text("Enter your email") },
+                    placeholder = { Text(stringResource(R.string.enter_your_email)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
@@ -227,7 +225,7 @@ fun SignUpScreenContent(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Phone Number",
+                    text = stringResource(R.string.phone_number),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
@@ -249,11 +247,11 @@ fun SignUpScreenContent(
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Phone,
-                            contentDescription = "Phone Number",
+                            contentDescription = stringResource(R.string.phone_number_icon),
                             tint = Color(0xFF514EB7)
                         )
                     },
-                    placeholder = { Text("Enter your phone number") },
+                    placeholder = { Text(stringResource(R.string.enter_your_phone_number)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(
@@ -269,7 +267,7 @@ fun SignUpScreenContent(
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Password",
+                    text = stringResource(R.string.password),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
@@ -291,11 +289,11 @@ fun SignUpScreenContent(
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Lock,
-                            contentDescription = "Password",
+                            contentDescription = stringResource(R.string.password_icon),
                             tint = Color(0xFF514EB7)
                         )
                     },
-                    placeholder = { Text("Enter your password") },
+                    placeholder = { Text(stringResource(R.string.enter_your_password)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -310,20 +308,20 @@ fun SignUpScreenContent(
                         IconButton(onClick = onPasswordVisibilityChange) {
                             Icon(
                                 imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                contentDescription = if (passwordVisible) "Hide password" else "Show password"
+                                contentDescription = stringResource(if (passwordVisible) R.string.hide_password else R.string.show_password)
                             )
                         }
                     },
                     enabled = !state.isLoading,
                     supportingText = if (isPasswordTooShort) {
-                        { Text("Password must be at least 6 characters") }
+                        { Text(stringResource(R.string.password_must_be_at_least_6_characters)) }
                     } else null
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "Confirm Password",
+                    text = stringResource(R.string.confirm_password),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier
@@ -345,11 +343,11 @@ fun SignUpScreenContent(
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Lock,
-                            contentDescription = "Confirm Password",
+                            contentDescription = stringResource(R.string.confirm_password_icon),
                             tint = Color(0xFF514EB7)
                         )
                     },
-                    placeholder = { Text("Re-enter your password") },
+                    placeholder = { Text(stringResource(R.string.re_enter_your_password)) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -367,14 +365,14 @@ fun SignUpScreenContent(
                         IconButton(onClick = onConfirmPasswordVisibilityChange) {
                             Icon(
                                 imageVector = if (confirmPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                contentDescription = if (confirmPasswordVisible) "Hide password" else "Show password"
+                                contentDescription = stringResource(if (confirmPasswordVisible) R.string.hide_password else R.string.show_password)
                             )
                         }
                     },
                     enabled = !state.isLoading,
                     isError = !doPasswordsMatch,
                     supportingText = if (!doPasswordsMatch) {
-                        { Text("Passwords do not match", color = MaterialTheme.colorScheme.error) }
+                        { Text(stringResource(R.string.passwords_do_not_match), color = MaterialTheme.colorScheme.error) }
                     } else null
                 )
 
@@ -395,7 +393,7 @@ fun SignUpScreenContent(
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = "I agree to the Terms and Conditions",
+                        text = stringResource(R.string.i_agree_to_terms),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.weight(1f)
                     )
@@ -440,7 +438,7 @@ fun SignUpScreenContent(
                         )
                     } else {
                         Text(
-                            "Sign Up",
+                            stringResource(R.string.sign_up),
                             style = MaterialTheme.typography.titleMedium
                         )
                     }
@@ -454,7 +452,7 @@ fun SignUpScreenContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "Already have an account? ",
+                        text = stringResource(R.string.already_have_account) + " ",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -463,7 +461,7 @@ fun SignUpScreenContent(
                         enabled = !state.isLoading
                     ) {
                         Text(
-                            "Sign In",
+                            stringResource(R.string.sign_in),
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = Color(0xFF514EB7)
