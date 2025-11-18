@@ -16,7 +16,7 @@ class AuthRepositoryImpl(
     private val firestore: FirebaseFirestore
 ) : AuthRepository {
 
-    override suspend fun signUp(
+    override fun signUp(
         name: String,
         email: String,
         phone: String,
@@ -59,7 +59,7 @@ class AuthRepositoryImpl(
         awaitClose()
     }
 
-    override suspend fun sendEmailVerification(): Flow<AuthResult<Boolean>> = callbackFlow {
+    override fun sendEmailVerification(): Flow<AuthResult<Boolean>> = callbackFlow {
         try {
             trySend(AuthResult.Loading)
 
@@ -77,7 +77,7 @@ class AuthRepositoryImpl(
         awaitClose()
     }
 
-    override suspend fun checkEmailVerification(): Flow<AuthResult<Boolean>> = callbackFlow {
+    override fun checkEmailVerification(): Flow<AuthResult<Boolean>> = callbackFlow {
         try {
             trySend(AuthResult.Loading)
 
@@ -104,7 +104,7 @@ class AuthRepositoryImpl(
         awaitClose()
     }
 
-    override suspend fun signIn(email: String, password: String): Flow<AuthResult<User>> = callbackFlow {
+    override fun signIn(email: String, password: String): Flow<AuthResult<User>> = callbackFlow {
         try {
             trySend(AuthResult.Loading)
 
@@ -139,7 +139,7 @@ class AuthRepositoryImpl(
         firebaseAuth.signOut()
     }
 
-    override suspend fun deleteCurrentUser(): Flow<AuthResult<Boolean>> = callbackFlow {
+    override fun deleteCurrentUser(): Flow<AuthResult<Boolean>> = callbackFlow {
         try {
             trySend(AuthResult.Loading)
 
@@ -181,4 +181,3 @@ class AuthRepositoryImpl(
         return firebaseAuth.currentUser != null
     }
 }
-
