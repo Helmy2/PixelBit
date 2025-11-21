@@ -60,7 +60,7 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     // Compose Navigation
-    implementation(libs.androidx.navigation.compose)
+    implementation(libs.bundles.nav3)
 
     // ViewModel
     implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -70,8 +70,7 @@ dependencies {
 
     // Firebase (BOM) & Services
     implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.auth)
-    implementation(libs.firebase.firestore)
+    implementation(libs.bundles.firebase)
 
     // DataStore
     implementation(libs.androidx.datastore.preferences)

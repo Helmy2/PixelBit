@@ -1,4 +1,4 @@
-package com.example.pixelbit.ui.theme
+package com.example.pixelbit.presentation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
