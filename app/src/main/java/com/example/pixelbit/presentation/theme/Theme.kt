@@ -1,4 +1,4 @@
-package com.example.pixelbit.ui.theme
+package com.example.pixelbit.presentation.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

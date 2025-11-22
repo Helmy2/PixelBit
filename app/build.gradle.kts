@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -58,7 +60,7 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     // Compose Navigation
-    implementation(libs.androidx.navigation.compose)
+    implementation(libs.bundles.nav3)
 
     // ViewModel
     implementation(libs.androidx.lifecycle.viewmodel.compose)
@@ -68,8 +70,7 @@ dependencies {
 
     // Firebase (BOM) & Services
     implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.auth)
-    implementation(libs.firebase.firestore)
+    implementation(libs.bundles.firebase)
 
     // DataStore
     implementation(libs.androidx.datastore.preferences)
