@@ -3,7 +3,6 @@ package com.example.pixelbit.presentation.features.auth.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pixelbit.domain.repository.AuthRepository
-import com.example.pixelbit.presentation.navigation.NavGraph
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -27,7 +26,7 @@ class LoginViewModel(private val authRepository: AuthRepository) : ViewModel() {
 
     fun onEmailChange(newValue: String) {
         _email.value = newValue
-        _errorMessage.value = null // Clear error on type
+        _errorMessage.value = null
     }
 
     fun onPasswordChange(newValue: String) {
@@ -53,7 +52,7 @@ class LoginViewModel(private val authRepository: AuthRepository) : ViewModel() {
                 
                 onSuccess()
             }.onFailure { error ->
-                _errorMessage.value = "Login failed"
+                _errorMessage.value = "Wrong e-mail or password"
             }
         }
     }

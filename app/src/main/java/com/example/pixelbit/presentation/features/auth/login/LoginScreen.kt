@@ -19,8 +19,20 @@ import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,13 +49,12 @@ import androidx.compose.ui.unit.sp
 import com.example.pixelbit.R
 import org.koin.androidx.compose.koinViewModel
 
-// 1. Stateful Composable (Logic & Injection)
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = koinViewModel(),
     onLoginSuccess: () -> Unit,
     onForgotPassword: () -> Unit,
-    onSignUpClick: () -> Unit // Added parameter
+    onSignUpClick: () -> Unit
 ) {
     val email by viewModel.email.collectAsState()
     val password by viewModel.password.collectAsState()
@@ -52,14 +63,13 @@ fun LoginScreen(
     val errorMessage by viewModel.errorMessage.collectAsState()
     val context = LocalContext.current
 
-    // Side effects (Toast) remain here
+    // Error Toast
     LaunchedEffect(errorMessage) {
         errorMessage?.let {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
         }
     }
 
-    // Pass state down to the UI
     LoginScreenContent(
         email = email,
         password = password,
@@ -70,11 +80,10 @@ fun LoginScreen(
         onTogglePasswordVisibility = viewModel::togglePasswordVisibility,
         onLoginClick = { viewModel.login(onLoginSuccess) },
         onForgotPasswordClick = onForgotPassword,
-        onSignUpClick = onSignUpClick // Pass navigation
+        onSignUpClick = onSignUpClick
     )
 }
 
-// 2. Stateless Composable (Pure UI for Preview)
 @Composable
 fun LoginScreenContent(
     email: String,
@@ -86,7 +95,7 @@ fun LoginScreenContent(
     onTogglePasswordVisibility: () -> Unit,
     onLoginClick: () -> Unit,
     onForgotPasswordClick: () -> Unit,
-    onSignUpClick: () -> Unit // Added parameter
+    onSignUpClick: () -> Unit
 ) {
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background
@@ -276,7 +285,6 @@ fun InputLabel(text: String) {
     )
 }
 
-// 3. Preview Section
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
