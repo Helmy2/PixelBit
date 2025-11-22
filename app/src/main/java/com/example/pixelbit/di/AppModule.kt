@@ -2,6 +2,7 @@ package com.example.pixelbit.di
 
 import com.example.pixelbit.data.repository.AuthRepositoryImpl
 import com.example.pixelbit.domain.repository.AuthRepository
+import com.example.pixelbit.presentation.features.auth.login.LoginViewModel
 import com.example.pixelbit.presentation.features.auth.signup.SignUpViewModel
 import com.example.pixelbit.presentation.features.auth.verification.VerificationViewModel
 import com.example.pixelbit.presentation.navigation.AppNavigator
@@ -26,4 +27,5 @@ val appModule = module {
 
     viewModelOf(::SignUpViewModel)
     viewModelOf(::VerificationViewModel)
+    viewModelOf(::LoginViewModel)
 }

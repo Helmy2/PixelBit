@@ -53,7 +53,7 @@ class LoginViewModel(private val authRepository: AuthRepository) : ViewModel() {
                 
                 onSuccess()
             }.onFailure { error ->
-                _errorMessage.value = error.localizedMessage ?: "Login failed"
+                _errorMessage.value = "Login failed"
             }
         }
     }
