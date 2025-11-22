@@ -7,12 +7,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.example.pixelbit.presentation.features.auth.signup.SignUpScreen
 import com.example.pixelbit.presentation.features.auth.verification.VerificationScreen
+import com.example.pixelbit.presentation.features.onboarding.OnboardingScreen
+import com.example.pixelbit.presentation.features.splash.SplashScreen
 
 @Composable
 fun NavGraph(
     navController: NavHostController,
-    startDestination: Screen = Screen.SignUp
-) {
+    startDestination: Screen = Screen.Splash) {
     NavHost(
         navController = navController,
         startDestination = startDestination
@@ -61,6 +62,36 @@ fun NavGraph(
 
         composable<Screen.Home> {
             // TODO: Implement Home Screen
+        }
+        composable<Screen.Splash> {
+            SplashScreen(
+                onNavigateToOnboarding = {
+                    navController.navigate(Screen.Onboarding) {
+                        popUpTo(Screen.Splash) { inclusive = true }
+                    }
+                },
+                onNavigateToSignIn = {
+                    navController.navigate(Screen.SignIn) {
+                        popUpTo(Screen.Splash) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+
+        composable<Screen.Onboarding> {
+            OnboardingScreen(
+                onNavigateToSignUp = {
+                    navController.navigate(Screen.SignUp) {
+                        popUpTo(Screen.Onboarding) { inclusive = true }
+                    }
+                },
+                onNavigateToSignIn = {
+                    navController.navigate(Screen.SignIn) {
+                        popUpTo(Screen.Onboarding) { inclusive = true }
+                    }
+                }
+            )
         }
     }
 }
