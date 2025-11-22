@@ -1,10 +1,25 @@
 package com.example.pixelbit.presentation.navigation
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.ui.NavDisplay
+import com.example.pixelbit.presentation.features.auth.login.LoginScreen
 import com.example.pixelbit.presentation.features.auth.signup.SignUpScreen
 import com.example.pixelbit.presentation.features.auth.verification.VerificationScreen
 import com.example.pixelbit.presentation.features.onboarding.OnboardingScreen
@@ -12,87 +27,101 @@ import com.example.pixelbit.presentation.features.splash.SplashScreen
 
 @Composable
 fun NavGraph(
-    navController: NavHostController,
-    startDestination: Screen = Screen.Splash) {
-    NavHost(
-        navController = navController,
-        startDestination = startDestination
-    ) {
-        composable<Screen.SignUp> {
-            SignUpScreen(
-                onSignUpSuccess = { email ->
-                    navController.navigate(Screen.Verification(email)) {
-                        popUpTo(Screen.SignUp)
-                    }
-                },
-                onNavigateToSignIn = {
-                    navController.navigate(Screen.SignIn) {
-                        popUpTo(Screen.SignUp) {
-                            inclusive = true
+    navController: AppNavigator,
+) {
+    Scaffold(
+        bottomBar = {
+            AnimatedVisibility(navController.shouldShowAppBar()) {
+                BottomAppBar(navController)
+            }
+        },
+        contentWindowInsets = WindowInsets()
+    ) { paddingValues ->
+        NavDisplay(
+            backStack = navController.backStack,
+            onBack = { navController.back() },
+            modifier = Modifier.padding(paddingValues),
+            transitionSpec = {
+                slideInHorizontally(initialOffsetX = { it }) togetherWith
+                        slideOutHorizontally(targetOffsetX = { -it })
+            },
+            popTransitionSpec = {
+                slideInHorizontally(initialOffsetX = { -it }) togetherWith
+                        slideOutHorizontally(targetOffsetX = { it })
+            },
+            predictivePopTransitionSpec = {
+                slideInHorizontally(initialOffsetX = { -it }) togetherWith
+                        slideOutHorizontally(targetOffsetX = { it })
+            },
+            entryProvider = entryProvider {
+                entry<Screen.SignUp> {
+                    SignUpScreen(
+                        onSignUpSuccess = { email ->
+                            navController.add(Screen.Verification(email))
+                        },
+                        onNavigateToSignIn = {
+                            navController.add(Screen.SignIn)
+                        }
+                    )
+                }
+
+                entry<Screen.Verification> {
+                    VerificationScreen(
+                        email = it.email,
+                        onVerificationSuccess = {
+                            navController.add(Screen.Home)
+                        },
+                        onBack = {
+                            navController.back()
+                        }
+                    )
+                }
+
+                entry<Screen.SignIn> {
+                    LoginScreen(
+                        onLoginSuccess = {
+                            navController.add(Screen.Home)
+                        },
+                        onForgotPassword = { },
+                        onSignUpClick = {
+                            navController.add(Screen.SignUp)
+                        },
+                    )
+                }
+
+                entry<Screen.Home> {
+                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Button(onClick = {
+                            navController.add(Screen.SignUp)
+                        }) {
+                            Text(text = "Sign Up")
                         }
                     }
                 }
-            )
-        }
 
-        composable<Screen.Verification> { backStackEntry ->
-            val email = backStackEntry.toRoute<Screen.Verification>().email
-            VerificationScreen(
-                email = email,
-                onVerificationSuccess = {
-                    navController.navigate(Screen.Home) {
-                        popUpTo(0) {
-                            inclusive = true
-                        }
-                    }
-                },
-                onBack = {
-                    navController.navigate(Screen.SignUp) {
-                        popUpTo(0) {
-                            inclusive = true
-                        }
-                    }
+                entry<Screen.Profile> {
                 }
-            )
-        }
 
-        composable<Screen.SignIn> {
-            // TODO: Implement Sign In Screen
-        }
-
-        composable<Screen.Home> {
-            // TODO: Implement Home Screen
-        }
-        composable<Screen.Splash> {
-            SplashScreen(
-                onNavigateToOnboarding = {
-                    navController.navigate(Screen.Onboarding) {
-                        popUpTo(Screen.Splash) { inclusive = true }
-                    }
-                },
-                onNavigateToSignIn = {
-                    navController.navigate(Screen.SignIn) {
-                        popUpTo(Screen.Splash) { inclusive = true }
-                    }
+                entry<Screen.MyOrders> {
                 }
-            )
-        }
 
-
-        composable<Screen.Onboarding> {
-            OnboardingScreen(
-                onNavigateToSignUp = {
-                    navController.navigate(Screen.SignUp) {
-                        popUpTo(Screen.Onboarding) { inclusive = true }
-                    }
-                },
-                onNavigateToSignIn = {
-                    navController.navigate(Screen.SignIn) {
-                        popUpTo(Screen.Onboarding) { inclusive = true }
-                    }
+                entry<Screen.Favorites> {
                 }
+            }
+        )
+    }
+}
+
+
+@Composable
+fun BottomAppBar(navigator: AppNavigator) {
+    NavigationBar {
+        AppNavigator.TOP_LEVEL_ROUTES.forEach {
+            NavigationBarItem(
+                selected = navigator.isSelected(it.route),
+                onClick = { navigator.addTopLevel(it.route) },
+                icon = { Icon(it.selectedIcon, null) }
             )
         }
     }
 }
-

@@ -1,15 +1,14 @@
 package com.example.pixelbit.di
 
-import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import com.example.pixelbit.data.repository.AuthRepositoryImpl
 import com.example.pixelbit.data.repository.OnboardingRepositoryImpl
 import com.example.pixelbit.domain.repository.AuthRepository
+import com.example.pixelbit.presentation.features.auth.login.LoginViewModel
 import com.example.pixelbit.domain.repository.OnboardingRepository
 import com.example.pixelbit.presentation.features.auth.signup.SignUpViewModel
 import com.example.pixelbit.presentation.features.auth.verification.VerificationViewModel
+import com.example.pixelbit.presentation.navigation.AppNavigator
+import com.example.pixelbit.presentation.navigation.Screen
 import com.example.pixelbit.presentation.features.onboarding.OnboardingViewModel
 import com.example.pixelbit.presentation.features.splash.SplashViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -23,6 +22,10 @@ import org.koin.dsl.module
  */
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "pixelbit_preferences")
 val appModule = module {
+    single {
+        // Todo make the start destination base if the user is logged in or not
+        AppNavigator(Screen.Home)
+    }
     single { FirebaseAuth.getInstance() }
     single { FirebaseFirestore.getInstance() }
 
@@ -35,4 +38,5 @@ val appModule = module {
     single<OnboardingRepository> { OnboardingRepositoryImpl(get()) }
     viewModelOf(::OnboardingViewModel)
     viewModelOf(::SplashViewModel)
+    viewModelOf(::LoginViewModel)
 }

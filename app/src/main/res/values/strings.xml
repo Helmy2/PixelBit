@@ -65,4 +65,13 @@
     <string name="failed_to_sign_in">Failed to sign in</string>
     <string name="failed_to_delete_user">Failed to delete user</string>
     <string name="email_not_verified_yet">Email not verified yet. Please check your inbox.</string>
+    <!-- ... existing strings ... -->
+
+    <!-- Login Screen -->
+    <string name="login_account">Login Account</string>
+    <string name="login_subtitle">Please login with registered account</string>
+    <string name="email_or_phone">Email or Phone Number</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="enter_email_or_phone">Enter your email or phone</string>
+    <string name="dont_have_account">don\'t have account</string>
 </resources>

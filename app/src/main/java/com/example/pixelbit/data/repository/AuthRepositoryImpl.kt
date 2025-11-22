@@ -180,4 +180,13 @@ class AuthRepositoryImpl(
     override fun isUserLoggedIn(): Boolean {
         return firebaseAuth.currentUser != null
     }
+
+    override suspend fun login(email: String, pass: String): Result<Unit> {
+        return try {
+            firebaseAuth.signInWithEmailAndPassword(email, pass).await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
