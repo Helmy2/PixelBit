@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
+import com.example.pixelbit.presentation.features.auth.login.LoginScreen
 import com.example.pixelbit.presentation.features.auth.signup.SignUpScreen
 import com.example.pixelbit.presentation.features.auth.verification.VerificationScreen
 
@@ -75,6 +76,15 @@ fun NavGraph(
                 }
 
                 entry<Screen.SignIn> {
+                    LoginScreen(
+                        onLoginSuccess = {
+                            navController.add(Screen.Home)
+                        },
+                        onForgotPassword = { },
+                        onSignUpClick = {
+                            navController.add(Screen.SignUp)
+                        },
+                    )
                 }
 
                 entry<Screen.Home> {
