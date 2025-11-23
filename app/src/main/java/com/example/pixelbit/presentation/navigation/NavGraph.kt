@@ -23,7 +23,6 @@ import com.example.pixelbit.presentation.features.auth.login.LoginScreen
 import com.example.pixelbit.presentation.features.auth.signup.SignUpScreen
 import com.example.pixelbit.presentation.features.auth.verification.VerificationScreen
 import com.example.pixelbit.presentation.features.onboarding.OnboardingScreen
-import com.example.pixelbit.presentation.features.splash.SplashScreen
 
 @Composable
 fun NavGraph(
@@ -54,17 +53,6 @@ fun NavGraph(
                         slideOutHorizontally(targetOffsetX = { it })
             },
             entryProvider = entryProvider {
-                entry<Screen.Splash> {
-                    SplashScreen(
-                        onNavigateToOnboarding = {
-                            navController.add(Screen.Onboarding)
-                        },
-                        onNavigateToSignIn = {
-                            navController.add(Screen.SignIn)
-                        }
-                    )
-                }
-
                 entry<Screen.Onboarding> {
                     OnboardingScreen(
                         onNavigateToSignUp = {
@@ -137,7 +125,7 @@ fun NavGraph(
 @Composable
 fun BottomAppBar(navigator: AppNavigator) {
     NavigationBar {
-        AppNavigator.TOP_LEVEL_ROUTES.forEach { destination ->
+        TOP_LEVEL_ROUTES.forEach { destination ->
             NavigationBarItem(
                 selected = navigator.isSelected(destination.route),
                 onClick = { navigator.addTopLevel(destination.route) },

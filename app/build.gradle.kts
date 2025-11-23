@@ -52,6 +52,7 @@ android {
 dependencies {
     // Core & Coroutines
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.splashscreen)
     implementation(libs.bundles.coroutines)
 
     // Jetpack Compose (BOM) & UI
@@ -77,7 +78,4 @@ dependencies {
 
     // Coil
     implementation(libs.coil.compose)
-
-    //splash
-    implementation("androidx.core:core-splashscreen:1.0.0")
 }

@@ -7,18 +7,18 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.example.pixelbit.data.repository.AuthRepositoryImpl
 import com.example.pixelbit.data.repository.OnboardingRepositoryImpl
 import com.example.pixelbit.domain.repository.AuthRepository
-import com.example.pixelbit.presentation.features.auth.login.LoginViewModel
 import com.example.pixelbit.domain.repository.OnboardingRepository
+import com.example.pixelbit.presentation.features.auth.login.LoginViewModel
 import com.example.pixelbit.presentation.features.auth.signup.SignUpViewModel
 import com.example.pixelbit.presentation.features.auth.verification.VerificationViewModel
-import com.example.pixelbit.presentation.navigation.AppNavigator
-import com.example.pixelbit.presentation.navigation.Screen
 import com.example.pixelbit.presentation.features.onboarding.OnboardingViewModel
-import com.example.pixelbit.presentation.features.splash.SplashViewModel
+import com.example.pixelbit.presentation.navigation.AppNavigator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import org.koin.android.ext.koin.androidContext
+import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
+import org.koin.dsl.bind
 import org.koin.dsl.module
 
 /**
@@ -26,21 +26,16 @@ import org.koin.dsl.module
  */
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "pixelbit_preferences")
 val appModule = module {
-    single {
-        // Todo make the start destination base if the user is logged in or not
-        AppNavigator(Screen.Home)
-    }
+    singleOf(::AppNavigator)
     single { FirebaseAuth.getInstance() }
     single { FirebaseFirestore.getInstance() }
+    single<DataStore<Preferences>> { androidContext().dataStore }
 
-    single<AuthRepository> { AuthRepositoryImpl(get(), get()) }
+    singleOf(::AuthRepositoryImpl).bind<AuthRepository>()
+    singleOf(::OnboardingRepositoryImpl).bind<OnboardingRepository>()
 
     viewModelOf(::SignUpViewModel)
     viewModelOf(::VerificationViewModel)
-
-    single<DataStore<Preferences>> { androidContext().dataStore }
-    single<OnboardingRepository> { OnboardingRepositoryImpl(get()) }
     viewModelOf(::OnboardingViewModel)
-    viewModelOf(::SplashViewModel)
     viewModelOf(::LoginViewModel)
 }
