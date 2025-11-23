@@ -52,6 +52,7 @@ android {
 dependencies {
     // Core & Coroutines
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.splashscreen)
     implementation(libs.bundles.coroutines)
 
     // Jetpack Compose (BOM) & UI

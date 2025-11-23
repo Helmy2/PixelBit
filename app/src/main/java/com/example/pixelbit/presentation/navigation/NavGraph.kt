@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -22,6 +21,7 @@ import androidx.navigation3.ui.NavDisplay
 import com.example.pixelbit.presentation.features.auth.login.LoginScreen
 import com.example.pixelbit.presentation.features.auth.signup.SignUpScreen
 import com.example.pixelbit.presentation.features.auth.verification.VerificationScreen
+import com.example.pixelbit.presentation.features.onboarding.OnboardingScreen
 
 @Composable
 fun NavGraph(
@@ -52,6 +52,17 @@ fun NavGraph(
                         slideOutHorizontally(targetOffsetX = { it })
             },
             entryProvider = entryProvider {
+                entry<Screen.Onboarding> {
+                    OnboardingScreen(
+                        onNavigateToSignUp = {
+                            navController.add(Screen.SignUp)
+                        },
+                        onNavigateToSignIn = {
+                            navController.add(Screen.SignIn)
+                        }
+                    )
+                }
+                // KEEP THE EXISTING ENTRIES BUT UPDATE NAVIGATION CALLS:
                 entry<Screen.SignUp> {
                     SignUpScreen(
                         onSignUpSuccess = { email ->
@@ -67,7 +78,7 @@ fun NavGraph(
                     VerificationScreen(
                         email = it.email,
                         onVerificationSuccess = {
-                            navController.add(Screen.Home)
+                            navController.addAsStart(Screen.Home)
                         },
                         onBack = {
                             navController.back()
@@ -78,7 +89,7 @@ fun NavGraph(
                 entry<Screen.SignIn> {
                     LoginScreen(
                         onLoginSuccess = {
-                            navController.add(Screen.Home)
+                            navController.addAsStart(Screen.Home)
                         },
                         onForgotPassword = { },
                         onSignUpClick = {
@@ -89,11 +100,7 @@ fun NavGraph(
 
                 entry<Screen.Home> {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Button(onClick = {
-                            navController.add(Screen.SignUp)
-                        }) {
-                            Text(text = "Sign Up")
-                        }
+                        Text(text = "Home")
                     }
                 }
 
@@ -110,15 +117,19 @@ fun NavGraph(
     }
 }
 
-
 @Composable
 fun BottomAppBar(navigator: AppNavigator) {
     NavigationBar {
-        AppNavigator.TOP_LEVEL_ROUTES.forEach {
+        TOP_LEVEL_ROUTES.forEach { destination ->
             NavigationBarItem(
-                selected = navigator.isSelected(it.route),
-                onClick = { navigator.addTopLevel(it.route) },
-                icon = { Icon(it.selectedIcon, null) }
+                selected = navigator.isSelected(destination.route),
+                onClick = { navigator.addTopLevel(destination.route) },
+                icon = {
+                    Icon(
+                        imageVector = destination.selectedIcon,
+                        contentDescription = null
+                    )
+                }
             )
         }
     }
