@@ -54,6 +54,28 @@ fun NavGraph(
                         slideOutHorizontally(targetOffsetX = { it })
             },
             entryProvider = entryProvider {
+                entry<Screen.Splash> {
+                    SplashScreen(
+                        onNavigateToOnboarding = {
+                            navController.add(Screen.Onboarding)
+                        },
+                        onNavigateToSignIn = {
+                            navController.add(Screen.SignIn)
+                        }
+                    )
+                }
+
+                entry<Screen.Onboarding> {
+                    OnboardingScreen(
+                        onNavigateToSignUp = {
+                            navController.add(Screen.SignUp)
+                        },
+                        onNavigateToSignIn = {
+                            navController.add(Screen.SignIn)
+                        }
+                    )
+                }
+                // KEEP THE EXISTING ENTRIES BUT UPDATE NAVIGATION CALLS:
                 entry<Screen.SignUp> {
                     SignUpScreen(
                         onSignUpSuccess = { email ->
@@ -112,15 +134,19 @@ fun NavGraph(
     }
 }
 
-
 @Composable
 fun BottomAppBar(navigator: AppNavigator) {
     NavigationBar {
-        AppNavigator.TOP_LEVEL_ROUTES.forEach {
+        AppNavigator.TOP_LEVEL_ROUTES.forEach { destination ->
             NavigationBarItem(
-                selected = navigator.isSelected(it.route),
-                onClick = { navigator.addTopLevel(it.route) },
-                icon = { Icon(it.selectedIcon, null) }
+                selected = navigator.isSelected(destination.route),
+                onClick = { navigator.addTopLevel(destination.route) },
+                icon = {
+                    Icon(
+                        imageVector = destination.selectedIcon,
+                        contentDescription = null
+                    )
+                }
             )
         }
     }

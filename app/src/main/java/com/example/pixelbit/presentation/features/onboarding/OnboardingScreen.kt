@@ -37,8 +37,8 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
-import com.example.pixelbit.ui.theme.Purple40
 import com.example.pixelbit.domain.model.OnboardingItem
+import com.example.pixelbit.presentation.theme.Purple40
 
 @Composable
 fun OnboardingScreen(

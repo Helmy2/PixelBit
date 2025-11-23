@@ -1,5 +1,9 @@
 package com.example.pixelbit.di
 
+import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import com.example.pixelbit.data.repository.AuthRepositoryImpl
 import com.example.pixelbit.data.repository.OnboardingRepositoryImpl
 import com.example.pixelbit.domain.repository.AuthRepository

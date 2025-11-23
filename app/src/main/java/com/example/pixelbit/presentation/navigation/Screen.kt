@@ -22,7 +22,6 @@ sealed class Screen {
     @Serializable
     data object Splash : Screen()
 
-}
 
     @Serializable
     data object MyOrders : Screen()
