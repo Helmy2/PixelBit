@@ -35,6 +35,11 @@ class AppNavigator(
         }
     }
 
+    fun addAsStart(command: Screen) {
+        backStack.clear()
+        backStack.add(command)
+    }
+
     fun back() {
         if (backStack.size > 1) {
             backStack.removeLastOrNull()

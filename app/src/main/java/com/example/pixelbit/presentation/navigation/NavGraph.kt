@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -79,7 +78,7 @@ fun NavGraph(
                     VerificationScreen(
                         email = it.email,
                         onVerificationSuccess = {
-                            navController.add(Screen.Home)
+                            navController.addAsStart(Screen.Home)
                         },
                         onBack = {
                             navController.back()
@@ -90,7 +89,7 @@ fun NavGraph(
                 entry<Screen.SignIn> {
                     LoginScreen(
                         onLoginSuccess = {
-                            navController.add(Screen.Home)
+                            navController.addAsStart(Screen.Home)
                         },
                         onForgotPassword = { },
                         onSignUpClick = {
@@ -101,11 +100,7 @@ fun NavGraph(
 
                 entry<Screen.Home> {
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Button(onClick = {
-                            navController.add(Screen.SignUp)
-                        }) {
-                            Text(text = "Sign Up")
-                        }
+                        Text(text = "Home")
                     }
                 }
 
