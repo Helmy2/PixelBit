@@ -9,3 +9,14 @@ val Pink80 = Color(0xFFEFB8C8)
 val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
+
+
+val FavoriteRed = Color(0xFFE53935)
+val CardBackgroundLight = Color(0xFFFFFFFF)
+val CardDetailsBackgroundLight = Color(0xFFEBECEE)
+val TextPrimaryLight = Color(0xFF2D2D2D)
+
+val FavoriteRedDark = Color(0xFFE53935)
+val CardBackgroundDark = Color(0xFF2C2C2C)
+val CardDetailsBackgroundDark = Color(0xFF1E1E1E)
+val TextPrimaryDark = Color(0xFFE0E0E0)

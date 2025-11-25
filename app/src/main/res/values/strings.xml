@@ -81,4 +81,6 @@
     <string name="start_adding_favorites">Start adding products to your wishlist</string>
     <string name="remove_from_favorites">Remove from favorites</string>
     <string name="add_to_favorites">Add to favorites</string>
+    <string name="no_favorites_description">No favorites</string>
+    <string name="price_format">$%s</string>
 </resources>

@@ -41,12 +41,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.pixelbit.R
 import com.example.pixelbit.domain.model.Product
 import org.koin.androidx.compose.koinViewModel
 
@@ -70,7 +72,7 @@ fun FavoritesScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "My Favorites",
+                        text = stringResource(id = R.string.my_favorites),
                         style = MaterialTheme.typography.titleLarge.copy(
                             fontWeight = FontWeight.Bold
                         )
@@ -151,7 +153,7 @@ private fun FavoriteProductCard(
             .height(280.dp),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
-            containerColor = Color.White
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
         ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 2.dp
@@ -182,7 +184,7 @@ private fun FavoriteProductCard(
                         .padding(8.dp)
                         .size(32.dp)
                         .clip(RoundedCornerShape(16.dp))
-                        .background(Color.White.copy(alpha = 0.9f))
+                        .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.9f))
                 ) {
                     IconButton(
                         onClick = onRemoveFromFavorites,
@@ -190,7 +192,7 @@ private fun FavoriteProductCard(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Favorite,
-                            contentDescription = "Remove from favorites",
+                            contentDescription = stringResource(id = R.string.remove_from_favorites),
                             tint = Color.Red,
                             modifier = Modifier.size(20.dp)
                         )
@@ -201,7 +203,7 @@ private fun FavoriteProductCard(
             Column(
 
                 modifier = Modifier
-                    .background(Color(0xFFEBECEE))
+                    .background(MaterialTheme.colorScheme.surfaceContainer)
                     .fillMaxSize()
                     .padding(12.dp),
                 verticalArrangement = Arrangement.SpaceBetween
@@ -215,7 +217,7 @@ private fun FavoriteProductCard(
                         ),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        color = Color(0xFF2D2D2D)
+                        color = MaterialTheme.colorScheme.onSurface
                     )
 
                     Spacer(modifier = Modifier.height(4.dp))
@@ -225,19 +227,19 @@ private fun FavoriteProductCard(
                         style = MaterialTheme.typography.bodySmall.copy(
                             fontSize = 12.sp
                         ),
-                        color = Color.Gray,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                 }
 
                 Text(
-                    text = "$${product.price}",
+                    text = stringResource(id = R.string.price_format, product.price),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp
                     ),
-                    color = Color(0xFF2D2D2D)
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
@@ -255,27 +257,27 @@ private fun EmptyFavoritesView(
     ) {
         Icon(
             imageVector = Icons.Default.FavoriteBorder,
-            contentDescription = "No favorites",
+            contentDescription = stringResource(id = R.string.no_favorites_description),
             modifier = Modifier.size(80.dp),
-            tint = Color.Gray.copy(alpha = 0.5f)
+            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "No Favorites Yet",
+            text = stringResource(id = R.string.no_favorites_yet),
             style = MaterialTheme.typography.titleLarge.copy(
                 fontWeight = FontWeight.Bold
             ),
-            color = Color.Gray
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Start adding products to your wishlist",
+            text = stringResource(id = R.string.start_adding_favorites),
             style = MaterialTheme.typography.bodyMedium,
-            color = Color.Gray
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
 }
