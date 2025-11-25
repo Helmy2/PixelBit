@@ -74,4 +74,13 @@
     <string name="forgot_password">Forgot Password?</string>
     <string name="enter_email_or_phone">Enter your email or phone</string>
     <string name="dont_have_account">don\'t have account</string>
+
+    <!-- Favorites Screen -->
+    <string name="my_favorites">My Favorites</string>
+    <string name="no_favorites_yet">No Favorites Yet</string>
+    <string name="start_adding_favorites">Start adding products to your wishlist</string>
+    <string name="remove_from_favorites">Remove from favorites</string>
+    <string name="add_to_favorites">Add to favorites</string>
+    <string name="no_favorites_description">No favorites</string>
+    <string name="price_format">$%s</string>
 </resources>

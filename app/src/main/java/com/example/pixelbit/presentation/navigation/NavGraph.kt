@@ -21,6 +21,7 @@ import androidx.navigation3.ui.NavDisplay
 import com.example.pixelbit.presentation.features.auth.login.LoginScreen
 import com.example.pixelbit.presentation.features.auth.signup.SignUpScreen
 import com.example.pixelbit.presentation.features.auth.verification.VerificationScreen
+import com.example.pixelbit.presentation.features.favorites.FavoritesScreen
 import com.example.pixelbit.presentation.features.onboarding.OnboardingScreen
 
 @Composable
@@ -111,6 +112,7 @@ fun NavGraph(
                 }
 
                 entry<Screen.Favorites> {
+                    FavoritesScreen()
                 }
             }
         )
