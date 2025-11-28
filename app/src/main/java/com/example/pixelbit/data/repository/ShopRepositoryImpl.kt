@@ -6,6 +6,12 @@ import com.example.pixelbit.domain.model.Product
 import com.example.pixelbit.domain.repository.ShopRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.tasks.await
 
 class ShopRepositoryImpl(
@@ -13,38 +19,59 @@ class ShopRepositoryImpl(
     private val firestore: FirebaseFirestore,
 ) : ShopRepository {
 
-    override suspend fun getProducts(): List<Product> {
-        return try {
-            val snapshot = firestore.collection("products").get().await()
-            val favorites = fetchFavoriteProductIds()
-            snapshot.documents.map { doc ->
-                Product(
-                    id = doc.getString("id") ?: throw Exception("Product ID is missing"),
-                    title = doc.getString("title") ?: "",
-                    category = doc.getString("category") ?: "",
-                    brand = doc.getString("brand") ?: "",
-                    price = doc.getString("price") ?: "",
-                    images = doc.getString("images") ?: "",
-                    description = doc.getString("description") ?: "",
-                    isFavorite = favorites.any { it == doc.id }
-                )
+    override fun getProducts(): Flow<List<Product>> {
+        val userId = firebaseAuth.currentUser?.uid
+
+        val favoritesFlow: Flow<List<String>> = if (userId == null) {
+            flowOf(emptyList())
+        } else {
+            callbackFlow {
+                val listenerRegistration = firestore.collection("users").document(userId)
+                    .addSnapshotListener { snapshot, error ->
+                        if (error != null) {
+                            cancel(message = "Error fetching favorites", cause = error)
+                            return@addSnapshotListener
+                        }
+                        val favoriteIds = snapshot?.get("favorites") as? List<String> ?: emptyList()
+                        trySend(favoriteIds)
+                    }
+                awaitClose { listenerRegistration.remove() }
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            emptyList()
         }
-    }
 
-    suspend fun fetchFavoriteProductIds(): List<String> {
-        val userId = firebaseAuth.currentUser?.uid ?: throw Exception("User not logged in")
+        val productsFlow: Flow<List<Product>> = callbackFlow {
+            val listenerRegistration = firestore.collection("products")
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        cancel(message = "Error fetching products", cause = error)
+                        return@addSnapshotListener
+                    }
+                    val products = snapshot?.documents?.mapNotNull { doc ->
+                        try {
+                            Product(
+                                id = doc.getString("id")!!,
+                                title = doc.getString("title") ?: "",
+                                category = doc.getString("category") ?: "",
+                                brand = doc.getString("brand") ?: "",
+                                price = doc.getString("price") ?: "",
+                                images = doc.getString("images") ?: "",
+                                description = doc.getString("description") ?: "",
+                                isFavorite = false
+                            )
+                        } catch (_: Exception) {
+                            null
+                        }
+                    } ?: emptyList()
+                    trySend(products)
+                }
+            awaitClose { listenerRegistration.remove() }
+        }
 
-        val userSnapshot = firestore.collection("users")
-            .document(userId)
-            .get()
-            .await()
-
-        val favoriteIds = userSnapshot.get("favorites") as? List<*>
-        return favoriteIds?.filterIsInstance<String>() ?: emptyList()
+        return productsFlow.combine(favoritesFlow) { products, favorites ->
+            products.map { product ->
+                product.copy(isFavorite = favorites.contains(product.id))
+            }
+        }
     }
 
     override suspend fun getCategories(): List<Category> {

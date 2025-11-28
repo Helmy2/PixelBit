@@ -49,11 +49,15 @@ class HomeViewModel(
                 _loading.value = true
             }
             try {
+                launch {
+                    shopRepository.getProducts().collect {
+                        _products.value = it
+                    }
+                }
+
                 val user = authRepository.getCurrentUser()
-                val productsResult = shopRepository.getProducts()
                 val categoriesResult = shopRepository.getCategories()
                 val bannersResult = shopRepository.getBanners()
-                _products.value = productsResult
                 _categories.value = categoriesResult
                 _banners.value = bannersResult
                 _user.value = user

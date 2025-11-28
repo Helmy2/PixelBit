@@ -18,6 +18,7 @@ import com.example.pixelbit.presentation.features.auth.verification.Verification
 import com.example.pixelbit.presentation.features.favorites.FavoritesViewModel
 import com.example.pixelbit.presentation.features.home.HomeViewModel
 import com.example.pixelbit.presentation.features.onboarding.OnboardingViewModel
+import com.example.pixelbit.presentation.features.profile.ProfileViewModel
 import com.example.pixelbit.presentation.navigation.AppNavigator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -48,4 +49,5 @@ val appModule = module {
     viewModelOf(::LoginViewModel)
     viewModelOf(::FavoritesViewModel)
     viewModelOf(::HomeViewModel)
+    viewModelOf(::ProfileViewModel)
 }

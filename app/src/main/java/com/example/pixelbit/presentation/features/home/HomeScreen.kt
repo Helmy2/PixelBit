@@ -88,7 +88,7 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
                 } else {
                     LazyVerticalGrid(
                         modifier = Modifier.fillMaxSize(),
-                        columns = GridCells.Fixed(2),
+                        columns = GridCells.Adaptive(320.dp),
                         contentPadding = PaddingValues(
                             start = 16.dp,
                             end = 16.dp,
@@ -97,9 +97,9 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
                         verticalArrangement = Arrangement.spacedBy(24.dp)
                     ) {
                         if (selectedTabIndex == 0) {
-                            item(span = { GridItemSpan(2) }) { HomeBanner(banners) }
+                            item(span = { GridItemSpan(maxLineSpan) }) { HomeBanner(banners) }
 
-                            item(span = { GridItemSpan(2) }) {
+                            item(span = { GridItemSpan(maxLineSpan) }) {
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -128,7 +128,8 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
 
                         } else {
                             itemsIndexed(
-                                categories, span = { _, _ -> GridItemSpan(2) }) { index, category ->
+                                categories,
+                                span = { _, _ -> GridItemSpan(maxLineSpan) }) { index, category ->
                                 CategoryItem(category = category, index = index)
                             }
                         }

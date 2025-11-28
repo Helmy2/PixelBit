@@ -12,6 +12,7 @@ firebaseBom = "34.6.0"
 datastore = "1.2.0"
 coil = "2.7.0"
 splashscreen = "1.0.0"
+material3AdaptiveNavigationSuite = "1.4.0"
 
 [libraries]
 # Core & Coroutines
@@ -51,6 +52,7 @@ androidx-datastore-preferences = { module = "androidx.datastore:datastore-prefer
 
 # Coil
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+androidx-compose-material3-adaptive-navigation-suite = { group = "androidx.compose.material3", name = "material3-adaptive-navigation-suite", version.ref = "material3AdaptiveNavigationSuite" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidApplication" }
@@ -66,6 +68,7 @@ compose = [
     "androidx-compose-ui-tooling-preview",
     "androidx-compose-material3",
     "androidx-compose-material-icons-extended",
+    "androidx-compose-material3-adaptive-navigation-suite"
 ]
 nav3 = [
     "androidx-navigation3-runtime",
