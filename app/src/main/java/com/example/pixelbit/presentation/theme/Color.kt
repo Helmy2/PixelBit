@@ -13,7 +13,7 @@ val Pink40 = Color(0xFF7D5260)
 
 val FavoriteRed = Color(0xFFE53935)
 val CardBackgroundLight = Color(0xFFFFFFFF)
-val CardDetailsBackgroundLight = Color(0xFFEBECEE)
+val CardDetailsBackgroundLight = Color(0xFFF1F1F1)
 val TextPrimaryLight = Color(0xFF2D2D2D)
 
 val FavoriteRedDark = Color(0xFFE53935)
