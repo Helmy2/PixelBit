@@ -27,5 +27,6 @@ interface AuthRepository {
     fun isUserLoggedIn(): Boolean
 
     suspend fun login(email: String, pass: String): Result<Unit>
+    fun getProfileFlow(): Flow<Result<User>>
 }
 

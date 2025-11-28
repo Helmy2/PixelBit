@@ -83,4 +83,8 @@
     <string name="add_to_favorites">Add to favorites</string>
     <string name="no_favorites_description">No favorites</string>
     <string name="price_format">$%s</string>
+
+    <!-- Profile Screen -->
+    <string name="my_profile">My Profile</string>
+    <string name="logout">Logout</string>
 </resources>

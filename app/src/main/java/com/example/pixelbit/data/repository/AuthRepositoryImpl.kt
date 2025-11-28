@@ -165,6 +165,41 @@ class AuthRepositoryImpl(
         awaitClose()
     }
 
+    override fun getProfileFlow(): Flow<Result<User>> = callbackFlow {
+        val userId = firebaseAuth.currentUser?.uid
+        if (userId == null) {
+            trySend(Result.failure(Exception("User not logged in")))
+            close()
+            return@callbackFlow
+        }
+
+        val userListener = firestore.collection("users").document(userId)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    trySend(Result.failure(error))
+                    return@addSnapshotListener
+                }
+
+                if (snapshot != null && snapshot.exists()) {
+                    val user = snapshot.toObject(User::class.java)
+                    if (user != null) {
+                        val firebaseUser = firebaseAuth.currentUser
+                        val updatedUser = user.copy(
+                            uid = userId,
+                            isEmailVerified = firebaseUser?.isEmailVerified ?: user.isEmailVerified
+                        )
+                        trySend(Result.success(updatedUser))
+                    } else {
+                        trySend(Result.failure(Exception("Failed to parse user data")))
+                    }
+                } else {
+                    trySend(Result.failure(Exception("User data not found")))
+                }
+            }
+
+        awaitClose { userListener.remove() }
+    }
+
     override fun getCurrentUser(): User? {
         val firebaseUser = firebaseAuth.currentUser
         return firebaseUser?.let {

@@ -1,20 +1,19 @@
 package com.example.pixelbit.presentation.navigation
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffoldDefaults
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScope
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.remember
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.example.pixelbit.presentation.features.auth.login.LoginScreen
@@ -23,23 +22,33 @@ import com.example.pixelbit.presentation.features.auth.verification.Verification
 import com.example.pixelbit.presentation.features.favorites.FavoritesScreen
 import com.example.pixelbit.presentation.features.home.HomeScreen
 import com.example.pixelbit.presentation.features.onboarding.OnboardingScreen
+import com.example.pixelbit.presentation.features.profile.ProfileScreen
 
 @Composable
 fun NavGraph(
     navController: AppNavigator,
 ) {
-    Scaffold(
-        bottomBar = {
-            AnimatedVisibility(navController.shouldShowAppBar()) {
-                BottomAppBar(navController)
-            }
+    val windowAdaptiveInfo = currentWindowAdaptiveInfo()
+
+    val navigationSuiteType = remember(windowAdaptiveInfo, navController.shouldShowAppBar()) {
+        val calculateFromAdaptiveInfo =
+            NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(windowAdaptiveInfo)
+        if (navController.shouldShowAppBar()) {
+            calculateFromAdaptiveInfo
+        } else {
+            NavigationSuiteType.None
+        }
+    }
+
+    NavigationSuiteScaffold(
+        layoutType = navigationSuiteType,
+        navigationSuiteItems = {
+            bottomAppBar(navController)
         },
-        contentWindowInsets = WindowInsets()
-    ) { paddingValues ->
+    ) {
         NavDisplay(
             backStack = navController.backStack,
             onBack = { navController.back() },
-            modifier = Modifier.padding(paddingValues),
             transitionSpec = {
                 val isTopLevelTransition = navController.shouldShowAppBar()
 
@@ -110,6 +119,7 @@ fun NavGraph(
                 }
 
                 entry<Screen.Profile> {
+                    ProfileScreen()
                 }
 
                 entry<Screen.MyOrders> {
@@ -123,20 +133,17 @@ fun NavGraph(
     }
 }
 
-@Composable
-fun BottomAppBar(navigator: AppNavigator) {
-    NavigationBar {
-        TOP_LEVEL_ROUTES.forEach { destination ->
-            NavigationBarItem(
-                selected = navigator.isSelected(destination.route),
-                onClick = { navigator.addTopLevel(destination.route) },
-                icon = {
-                    Icon(
-                        imageVector = destination.selectedIcon,
-                        contentDescription = null
-                    )
-                }
-            )
-        }
+fun NavigationSuiteScope.bottomAppBar(navigator: AppNavigator) {
+    TOP_LEVEL_ROUTES.forEach { destination ->
+        item(
+            selected = navigator.isSelected(destination.route),
+            onClick = { navigator.addTopLevel(destination.route) },
+            icon = {
+                Icon(
+                    imageVector = destination.selectedIcon,
+                    contentDescription = null
+                )
+            }
+        )
     }
 }
