@@ -1,10 +1,22 @@
 package com.example.pixelbit.presentation.features.home
 
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -16,35 +28,41 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.example.pixelbit.R
 import com.example.pixelbit.domain.model.Banner
-import com.example.pixelbit.domain.model.Category
-import com.example.pixelbit.domain.model.Product
-import com.example.pixelbit.domain.repository.ShopRepository
+import com.example.pixelbit.domain.model.User
 import com.example.pixelbit.presentation.features.category.CategoryItem
-import com.example.pixelbit.presentation.theme.PixelbitTheme
 import com.example.pixelbit.presentation.theme.Purple40
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
 
+    val user by viewModel.user.collectAsStateWithLifecycle()
     val products by viewModel.products.collectAsStateWithLifecycle()
     val categories by viewModel.categories.collectAsStateWithLifecycle()
     val banners by viewModel.banners.collectAsStateWithLifecycle()
@@ -54,16 +72,15 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
     var selectedTabIndex by remember { mutableStateOf(0) }
 
     Scaffold(
-        topBar = { HomeTopBar() },
-        containerColor = Color.White
+        topBar = { HomeTopBar(user) }, contentWindowInsets = WindowInsets()
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
             HomeTabs(
                 selectedIndex = selectedTabIndex,
-                onTabSelected = { index -> selectedTabIndex = index }
-            )
+                onTabSelected = { index -> selectedTabIndex = index })
 
-            PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = { viewModel.loadData(true) }) {
+            PullToRefreshBox(
+                isRefreshing = isRefreshing, onRefresh = { viewModel.loadData(true) }) {
                 if (isLoading) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator()
@@ -75,7 +92,6 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
                         contentPadding = PaddingValues(
                             start = 16.dp,
                             end = 16.dp,
-                            bottom = 16.dp
                         ),
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                         verticalArrangement = Arrangement.spacedBy(24.dp)
@@ -91,20 +107,28 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Text("New Arrivals 🔥", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                                    Text("See All", color = Purple40, fontWeight = FontWeight.SemiBold)
+                                    Text(
+                                        "New Arrivals 🔥",
+                                        fontSize = 20.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Text(
+                                        "See All",
+                                        color = Purple40,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
                                 }
                             }
 
                             items(products.take(10)) { product ->
                                 ProductItem(
                                     product = product,
-                                    onFavoriteClick = { viewModel.toggleFavorite(it) }
-                                )
+                                    onFavoriteClick = { viewModel.toggleFavorite(it) })
                             }
 
                         } else {
-                            itemsIndexed(categories, span = { _, _ -> GridItemSpan(2) }) { index, category ->
+                            itemsIndexed(
+                                categories, span = { _, _ -> GridItemSpan(2) }) { index, category ->
                                 CategoryItem(category = category, index = index)
                             }
                         }
@@ -128,8 +152,7 @@ fun HomeTabs(selectedIndex: Int, onTabSelected: (Int) -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .width(100.dp)
-                .clickable { onTabSelected(0) }
-        ) {
+                .clickable { onTabSelected(0) }) {
             Text(
                 "Home",
                 fontWeight = if (selectedIndex == 0) FontWeight.Bold else FontWeight.Normal,
@@ -155,8 +178,7 @@ fun HomeTabs(selectedIndex: Int, onTabSelected: (Int) -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .width(100.dp)
-                .clickable { onTabSelected(1) }
-        ) {
+                .clickable { onTabSelected(1) }) {
             Text(
                 "Category",
                 fontWeight = if (selectedIndex == 1) FontWeight.Bold else FontWeight.Normal,
@@ -179,7 +201,10 @@ fun HomeTabs(selectedIndex: Int, onTabSelected: (Int) -> Unit) {
 }
 
 @Composable
-fun HomeTopBar() {
+fun HomeTopBar(
+    user: User?
+) {
+    val context = LocalContext.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -189,25 +214,25 @@ fun HomeTopBar() {
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(
+            AsyncImage(
+                model = ImageRequest.Builder(context)
+                    // Todo replace with user image
+                    .data("")
+                    .crossfade(true)
+                    .error(R.drawable.profile_image)
+                    .build(),
+                contentDescription = "",
                 modifier = Modifier
                     .size(48.dp)
-                    .clip(CircleShape)
-                    .background(Color.Gray)
+                    .clip(CircleShape),
             )
             Spacer(modifier = Modifier.width(12.dp))
             Column {
-                Text("Hi, Jonathan", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                Text(user?.name.orEmpty(), fontWeight = FontWeight.Bold, fontSize = 16.sp)
                 Text("Let's go shopping", color = Color.Gray, fontSize = 12.sp)
             }
         }
         Row {
-            Icon(
-                Icons.Default.Search,
-                contentDescription = "Search",
-                modifier = Modifier.size(28.dp)
-            )
-            Spacer(modifier = Modifier.width(16.dp))
             Icon(
                 Icons.Default.Notifications,
                 contentDescription = "Notify",
@@ -217,7 +242,6 @@ fun HomeTopBar() {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeBanner(banners: List<Banner>) {
     if (banners.isNotEmpty()) {
@@ -245,44 +269,6 @@ fun HomeBanner(banners: List<Banner>) {
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop
             )
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    PixelbitTheme {
-        HomeScreen(viewModel = HomeViewModel(FakeShopRepository()))
-    }
-}
-
-private class FakeShopRepository : ShopRepository {
-    private val products = mutableListOf(
-        Product("1", "The Mirac Jiz", "Clothes", "Lisa Robber", "195.00", "", "desc", true),
-        Product("2", "Meriza Kiles", "Clothes", "Gazuna Resika", "143.45", "", "desc", false),
-        Product("3", "Kutuku Bag", "Bags", "Kutuku Store", "120.00", "", "desc", false),
-        Product("4", "Prada Bag", "Bags", "Prada", "500.00", "", "desc", false)
-    )
-
-    override suspend fun getProducts(): List<Product> = products
-
-    override suspend fun getCategories(): List<Category> = listOf(
-        Category("1", "New Arrivals", 208, ""),
-        Category("2", "Clothes", 358, ""),
-        Category("3", "Bags", 160, ""),
-        Category("4", "Shoes", 230, "")
-    )
-
-    override suspend fun getBanners(): List<Banner> = listOf(
-        Banner("1", ""),
-        Banner("2", "")
-    )
-
-    override suspend fun updateProductFavoriteStatus(productId: String, isFavorite: Boolean) {
-        val index = products.indexOfFirst { it.id == productId }
-        if (index != -1) {
-            products[index] = products[index].copy(isFavorite = isFavorite)
         }
     }
 }

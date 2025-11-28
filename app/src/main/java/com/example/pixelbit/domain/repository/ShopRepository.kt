@@ -8,5 +8,4 @@ interface ShopRepository {
     suspend fun getProducts(): List<Product>
     suspend fun getCategories(): List<Category>
     suspend fun getBanners(): List<Banner>
-    suspend fun updateProductFavoriteStatus(productId: String, isFavorite: Boolean)
 }

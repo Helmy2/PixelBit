@@ -1,20 +1,19 @@
 package com.example.pixelbit.presentation.navigation
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
@@ -22,6 +21,7 @@ import com.example.pixelbit.presentation.features.auth.login.LoginScreen
 import com.example.pixelbit.presentation.features.auth.signup.SignUpScreen
 import com.example.pixelbit.presentation.features.auth.verification.VerificationScreen
 import com.example.pixelbit.presentation.features.favorites.FavoritesScreen
+import com.example.pixelbit.presentation.features.home.HomeScreen
 import com.example.pixelbit.presentation.features.onboarding.OnboardingScreen
 
 @Composable
@@ -41,8 +41,15 @@ fun NavGraph(
             onBack = { navController.back() },
             modifier = Modifier.padding(paddingValues),
             transitionSpec = {
-                slideInHorizontally(initialOffsetX = { it }) togetherWith
-                        slideOutHorizontally(targetOffsetX = { -it })
+                val isTopLevelTransition = navController.shouldShowAppBar()
+
+                if (isTopLevelTransition) {
+                    fadeIn(animationSpec = tween(300)) togetherWith
+                            fadeOut(animationSpec = tween(300))
+                } else {
+                    slideInHorizontally(initialOffsetX = { it }) togetherWith
+                            slideOutHorizontally(targetOffsetX = { -it })
+                }
             },
             popTransitionSpec = {
                 slideInHorizontally(initialOffsetX = { -it }) togetherWith
@@ -63,7 +70,6 @@ fun NavGraph(
                         }
                     )
                 }
-                // KEEP THE EXISTING ENTRIES BUT UPDATE NAVIGATION CALLS:
                 entry<Screen.SignUp> {
                     SignUpScreen(
                         onSignUpSuccess = { email ->
@@ -100,9 +106,7 @@ fun NavGraph(
                 }
 
                 entry<Screen.Home> {
-                    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(text = "Home")
-                    }
+                    HomeScreen()
                 }
 
                 entry<Screen.Profile> {
