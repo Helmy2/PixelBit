@@ -7,6 +7,7 @@ import com.example.pixelbit.domain.model.Category
 import com.example.pixelbit.domain.model.Product
 import com.example.pixelbit.domain.model.User
 import com.example.pixelbit.domain.repository.AuthRepository
+import com.example.pixelbit.domain.repository.CartRepository
 import com.example.pixelbit.domain.repository.FavoritesRepository
 import com.example.pixelbit.domain.repository.ShopRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +17,8 @@ import kotlinx.coroutines.launch
 class HomeViewModel(
     private val shopRepository: ShopRepository,
     private val authRepository: AuthRepository,
-    private val favoritesRepository: FavoritesRepository
+    private val favoritesRepository: FavoritesRepository,
+    private val cartRepository: CartRepository
 ) : ViewModel() {
 
     private val _user = MutableStateFlow<User?>(null)
@@ -101,6 +103,22 @@ class HomeViewModel(
                         it
                     }
                 }
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun addToCart(product: Product) {
+        viewModelScope.launch {
+            try {
+                cartRepository.addToCart(
+                    productId = product.id,
+                    title = product.title,
+                    brand = product.brand,
+                    price = product.price,
+                    images = product.images
+                )
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
