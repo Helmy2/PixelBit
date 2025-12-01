@@ -123,7 +123,9 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
                             items(products.take(10)) { product ->
                                 ProductItem(
                                     product = product,
-                                    onFavoriteClick = { viewModel.toggleFavorite(it) })
+                                    onFavoriteClick = { viewModel.toggleFavorite(it) },
+                                    onAddToCart = { viewModel.addToCart(it) }
+                                )
                             }
 
                         } else {

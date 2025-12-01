@@ -32,6 +32,12 @@ sealed class Screen {
 
     @Serializable
     data object Favorites : Screen()
+
+    @Serializable
+    data object Cart : Screen()
+
+    @Serializable
+    data object Checkout : Screen()
 }
 
 data class TopLevelDestination(
@@ -46,7 +52,7 @@ val TOP_LEVEL_ROUTES: List<TopLevelDestination> =
             Icons.Default.Home,
         ),
         TopLevelDestination(
-            Screen.MyOrders,
+            Screen.Cart,
             Icons.Default.ShoppingCart,
         ),
         TopLevelDestination(

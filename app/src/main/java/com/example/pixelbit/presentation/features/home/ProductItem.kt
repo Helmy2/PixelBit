@@ -3,6 +3,7 @@ package com.example.pixelbit.presentation.features.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddShoppingCart
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Icon
@@ -36,6 +38,7 @@ import com.example.pixelbit.presentation.theme.CardDetailsBackgroundLight
 fun ProductItem(
     product: Product,
     onFavoriteClick: (String) -> Unit,
+    onAddToCart: (Product) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -56,19 +59,40 @@ fun ProductItem(
                 contentScale = ContentScale.Crop
             )
 
-            IconButton(
-                onClick = { onFavoriteClick(product.id) },
+            Row(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(8.dp)
+            ) {
+                IconButton(
+                    onClick = { onFavoriteClick(product.id) },
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .background(Color.Black.copy(alpha = 0.2f))
+                        .size(32.dp)
+                ) {
+                    Icon(
+                        imageVector = if (product.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                        contentDescription = "Favorite",
+                        tint = if (product.isFavorite) Color.Red else Color.White,
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+            }
+
+            IconButton(
+                onClick = { onAddToCart(product) },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(8.dp)
                     .clip(CircleShape)
-                    .background(Color.Black.copy(alpha = 0.2f))
+                    .background(Color.Black.copy(alpha = 0.6f))
                     .size(32.dp)
             ) {
                 Icon(
-                    imageVector = if (product.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                    contentDescription = "Favorite",
-                    tint = if (product.isFavorite) Color.Red else Color.White,
+                    imageVector = Icons.Default.AddShoppingCart,
+                    contentDescription = "Add to Cart",
+                    tint = Color.White,
                     modifier = Modifier.size(16.dp)
                 )
             }
@@ -108,6 +132,7 @@ fun ProductItemPreview() {
             description = "",
             isFavorite = true
         ),
-        onFavoriteClick = {}
+        onFavoriteClick = {},
+        onAddToCart = {}
     )
 }

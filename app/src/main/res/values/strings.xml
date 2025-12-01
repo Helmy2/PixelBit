@@ -87,4 +87,25 @@
     <!-- Profile Screen -->
     <string name="my_profile">My Profile</string>
     <string name="logout">Logout</string>
+
+    <!-- Cart Screen -->
+    <string name="my_cart">My Cart</string>
+    <string name="cart_empty">Your Cart is Empty</string>
+    <string name="cart_empty_message">Add products to your cart to see them here</string>
+    <string name="clear_all">Clear All</string>
+    <string name="clear_cart_title">Clear Cart</string>
+    <string name="clear_cart_message">Are you sure you want to remove all items from your cart?</string>
+    <string name="order_summary">Order Summary</string>
+    <string name="subtotal">Subtotal</string>
+    <string name="tax">Tax (10%)</string>
+    <string name="shipping">Shipping</string>
+    <string name="total">Total</string>
+    <string name="proceed_to_checkout">Proceed to Checkout</string>
+    <string name="add_to_cart">Add to Cart</string>
+    <string name="quantity">Quantity</string>
+    <string name="remove">Remove</string>
+    <string name="decrease_quantity">Decrease quantity</string>
+    <string name="increase_quantity">Increase quantity</string>
+    <string name="empty_cart">Empty cart</string>
+    <string name="cancel">Cancel</string>
 </resources>
