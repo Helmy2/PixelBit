@@ -86,7 +86,7 @@ fun ProductItem(
                     .align(Alignment.BottomEnd)
                     .padding(8.dp)
                     .clip(CircleShape)
-                    .background(Color.Black.copy(alpha = 0.6f))
+                    .background(Color.Black.copy(alpha = 0.2f))
                     .size(32.dp)
             ) {
                 Icon(

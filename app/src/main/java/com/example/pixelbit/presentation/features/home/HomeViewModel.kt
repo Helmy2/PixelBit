@@ -33,7 +33,7 @@ class HomeViewModel(
     private val _banners = MutableStateFlow<List<Banner>>(emptyList())
     val banners = _banners.asStateFlow()
 
-    private val _loading = MutableStateFlow(true)
+    private val _loading = MutableStateFlow(false)
     val loading = _loading.asStateFlow()
 
     private val _isRefreshing = MutableStateFlow(false)
