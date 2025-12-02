@@ -13,6 +13,7 @@ datastore = "1.2.0"
 coil = "2.7.0"
 splashscreen = "1.0.0"
 material3AdaptiveNavigationSuite = "1.4.0"
+kotlinxSerializationJson = "1.9.0"
 
 [libraries]
 # Core & Coroutines
@@ -33,6 +34,7 @@ androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 # Compose Navigation
 androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3" }
 androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "nav3" }
+androidx-navigation3-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycleViewmodel" }
 
 # ViewModel
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodel" }
@@ -54,6 +56,9 @@ androidx-datastore-preferences = { module = "androidx.datastore:datastore-prefer
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 androidx-compose-material3-adaptive-navigation-suite = { group = "androidx.compose.material3", name = "material3-adaptive-navigation-suite", version.ref = "material3AdaptiveNavigationSuite" }
 
+# Serialization
+kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidApplication" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -73,6 +78,7 @@ compose = [
 nav3 = [
     "androidx-navigation3-runtime",
     "androidx-navigation3-ui",
+    "androidx-navigation3-viewmodel"
 ]
 firebase = [
     "firebase-auth",

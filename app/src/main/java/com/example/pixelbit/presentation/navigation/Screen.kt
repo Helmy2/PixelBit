@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.ui.graphics.vector.ImageVector
 import kotlinx.serialization.Serializable
 
+@Serializable
 sealed class Screen {
     @Serializable
     data object SignUp : Screen()

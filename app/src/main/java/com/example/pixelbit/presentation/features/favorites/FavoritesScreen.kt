@@ -122,7 +122,7 @@ private fun FavoritesContent(
 
             else -> {
                 LazyVerticalGrid(
-                    columns = GridCells.Adaptive(320.dp),
+                    columns = GridCells.Adaptive(150.dp),
                     contentPadding = PaddingValues(16.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),

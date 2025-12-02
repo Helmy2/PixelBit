@@ -88,7 +88,7 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
                 } else {
                     LazyVerticalGrid(
                         modifier = Modifier.fillMaxSize(),
-                        columns = GridCells.Adaptive(320.dp),
+                        columns = GridCells.Adaptive(150.dp),
                         contentPadding = PaddingValues(
                             start = 16.dp,
                             end = 16.dp,

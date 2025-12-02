@@ -20,6 +20,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         val splashScreen = installSplashScreen()
         val navigator: AppNavigator by inject()
+        navigator.attachToRegistry(this)
         setContent {
             val keepSplashScreen by navigator.shouldKeepSplashScreenFlow()
                 .collectAsStateWithLifecycle(true)
