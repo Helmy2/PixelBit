@@ -1,7 +1,6 @@
 package com.example.pixelbit.presentation.features.auth.forgotpassword
 
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -198,9 +197,9 @@ fun ForgotPasswordScreenContent(
                     )
                 }
             }
-            
+
             Spacer(modifier = Modifier.height(16.dp))
-            
+
             TextButton(
                 onClick = onBackClick,
                 modifier = Modifier.fillMaxWidth()

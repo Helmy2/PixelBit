@@ -9,8 +9,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 
+@Suppress("DEPRECATION")
 class AuthRepositoryImpl(
     private val firebaseAuth: FirebaseAuth,
     private val firestore: FirebaseFirestore
@@ -225,20 +227,30 @@ class AuthRepositoryImpl(
         }
     }
 
-    override fun sendPasswordResetEmail(email: String): Flow<AuthResult<Unit>> = callbackFlow {
+    override suspend fun isEmailRegistered(email: String): Boolean {
+        return try {
+            val signInMethods = firebaseAuth.fetchSignInMethodsForEmail(email).await()
+            signInMethods.signInMethods?.isNotEmpty() ?: false
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    override fun sendPasswordResetEmail(email: String): Flow<AuthResult<Unit>> = flow {
         try {
-            trySend(AuthResult.Loading)
+            emit(AuthResult.Loading)
+
+            val methods = firebaseAuth.fetchSignInMethodsForEmail(email).await().signInMethods
+            if (methods.isNullOrEmpty()) {
+                emit(AuthResult.Error("No account found with this email."))
+                return@flow
+            }
+
             firebaseAuth.sendPasswordResetEmail(email).await()
-            trySend(AuthResult.Success(Unit))
+            emit(AuthResult.Success(Unit))
 
         } catch (e: Exception) {
-
-            if (e.message?.contains("There is no user record corresponding to this identifier") == true) {
-                trySend(AuthResult.Error("Email not registered. Please sign up first."))
-            } else {
-                trySend(AuthResult.Error(e.message ?: "Failed to send reset email"))
-            }
+            emit(AuthResult.Error(e.message ?: "Failed to send reset email"))
         }
-        awaitClose()
     }
 }

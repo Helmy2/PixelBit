@@ -30,4 +30,6 @@ interface AuthRepository {
     fun getProfileFlow(): Flow<Result<User>>
 
     fun sendPasswordResetEmail(email: String): Flow<AuthResult<Unit>>
+    
+    suspend fun isEmailRegistered(email: String): Boolean
 }
