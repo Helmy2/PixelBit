@@ -20,6 +20,9 @@ sealed class Screen {
     data object SignIn : Screen()
 
     @Serializable
+    data object ForgotPassword : Screen()
+
+    @Serializable
     data object Home : Screen()
 
     @Serializable
