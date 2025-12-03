@@ -36,6 +36,28 @@ Pixelbit is a modern Android application built with Kotlin and Jetpack Compose.
 * **Coil:** For image loading.
 * **Kotlinx Serialization:** For JSON serialization.
 
+## Project Structure
+
+The project is organized into the following packages:
+
+* `core`: Contains core components and utilities shared across the application.
+* `data`: Handles data sources, repositories, and models.
+* `di`: Dependency injection modules using Koin.
+* `domain`: Contains the business logic, use cases, and domain models.
+* `presentation`: Contains the UI layer, including Composables, ViewModels, and navigation.
+    * `features`: Contains the different features of the application.
+        * `auth`: User authentication (sign-up, sign-in).
+        * `cart`: Shopping cart functionality.
+        * `category`: Product categories.
+        * `checkout`: Checkout process.
+        * `favorites`: User's favorite products.
+        * `home`: The main home screen.
+        * `onboarding`: Onboarding screens for new users.
+        * `products`: Product details and lists.
+        * `profile`: User profile management.
+    * `navigation`: Navigation graph and related components.
+    * `theme`: App theme, colors, and typography.
+
 ## Getting Started
 
 To get a local copy up and running, follow these simple steps.
@@ -54,11 +76,3 @@ To get a local copy up and running, follow these simple steps.
 2. Open the project in Android Studio.
 3. Add your `google-services.json` file to the `app` directory.
 4. Build and run the application.
-
-## Project Structure
-
-The project follows the standard Android project structure.
-
-* `app/src/main/java`: Contains the application's source code.
-* `app/src/main/res`: Contains the application's resources.
-* `build.gradle.kts`: Gradle build scripts.
