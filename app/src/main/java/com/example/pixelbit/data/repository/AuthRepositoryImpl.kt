@@ -224,4 +224,21 @@ class AuthRepositoryImpl(
             Result.failure(e)
         }
     }
+
+    override fun sendPasswordResetEmail(email: String): Flow<AuthResult<Unit>> = callbackFlow {
+        try {
+            trySend(AuthResult.Loading)
+            firebaseAuth.sendPasswordResetEmail(email).await()
+            trySend(AuthResult.Success(Unit))
+
+        } catch (e: Exception) {
+
+            if (e.message?.contains("There is no user record corresponding to this identifier") == true) {
+                trySend(AuthResult.Error("Email not registered. Please sign up first."))
+            } else {
+                trySend(AuthResult.Error(e.message ?: "Failed to send reset email"))
+            }
+        }
+        awaitClose()
+    }
 }

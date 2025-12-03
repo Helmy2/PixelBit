@@ -14,6 +14,7 @@ import com.example.pixelbit.domain.repository.CartRepository
 import com.example.pixelbit.domain.repository.FavoritesRepository
 import com.example.pixelbit.domain.repository.OnboardingRepository
 import com.example.pixelbit.domain.repository.ShopRepository
+import com.example.pixelbit.presentation.features.auth.forgotpassword.ForgotPasswordViewModel
 import com.example.pixelbit.presentation.features.auth.login.LoginViewModel
 import com.example.pixelbit.presentation.features.auth.signup.SignUpViewModel
 import com.example.pixelbit.presentation.features.auth.verification.VerificationViewModel
@@ -51,6 +52,7 @@ val appModule = module {
     viewModelOf(::VerificationViewModel)
     viewModelOf(::OnboardingViewModel)
     viewModelOf(::LoginViewModel)
+    viewModelOf(::ForgotPasswordViewModel)
     viewModelOf(::FavoritesViewModel)
     viewModelOf(::HomeViewModel)
     viewModelOf(::ProfileViewModel)

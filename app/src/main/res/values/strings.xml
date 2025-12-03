@@ -65,7 +65,6 @@
     <string name="failed_to_sign_in">Failed to sign in</string>
     <string name="failed_to_delete_user">Failed to delete user</string>
     <string name="email_not_verified_yet">Email not verified yet. Please check your inbox.</string>
-    <!-- ... existing strings ... -->
 
     <!-- Login Screen -->
     <string name="login_account">Login Account</string>
@@ -74,6 +73,14 @@
     <string name="forgot_password">Forgot Password?</string>
     <string name="enter_email_or_phone">Enter your email or phone</string>
     <string name="dont_have_account">don\'t have account</string>
+
+    <!-- Forgot Password Screen -->
+    <string name="forgot_password_title">Forgot Password</string>
+    <string name="forgot_password_subtitle">Enter your email to reset your password</string>
+    <string name="send_reset_link">Send Reset Link</string>
+    <string name="check_your_email">Check your email</string>
+    <string name="reset_password_email_sent">We have sent a password reset link to your email.</string>
+    <string name="back_to_login">Back to Login</string>
 
     <!-- Favorites Screen -->
     <string name="my_favorites">My Favorites</string>
