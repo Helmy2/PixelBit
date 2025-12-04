@@ -1,8 +1,16 @@
 package com.example.pixelbit.presentation.features.category
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -16,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.pixelbit.domain.model.Category
-import com.example.pixelbit.presentation.theme.CardDetailsBackgroundLight
 
 @Composable
 fun CategoryItem(
@@ -26,12 +33,10 @@ fun CategoryItem(
 ) {
     val isTextOnLeft = index % 2 == 0
 
-    Box(
+    Card(
         modifier = modifier
             .fillMaxWidth()
             .height(140.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .background(color = CardDetailsBackgroundLight)
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),
@@ -63,7 +68,6 @@ fun CategoryText(category: Category, modifier: Modifier) {
             text = category.title,
             fontWeight = FontWeight.Bold,
             fontSize = 20.sp,
-            color = Color.Black
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(

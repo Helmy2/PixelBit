@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddShoppingCart
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -32,7 +33,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.pixelbit.domain.model.Product
-import com.example.pixelbit.presentation.theme.CardDetailsBackgroundLight
 
 @Composable
 fun ProductItem(
@@ -41,80 +41,82 @@ fun ProductItem(
     onAddToCart: (Product) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(160.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(color = CardDetailsBackgroundLight)
+    Card {
+        Column(
+            modifier = modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            AsyncImage(
-                model = product.images,
-                contentDescription = product.title,
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop
-            )
-
-            Row(
+            Box(
                 modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(8.dp)
+                    .fillMaxWidth()
+                    .height(160.dp)
+                    .clip(RoundedCornerShape(16.dp))
             ) {
-                IconButton(
-                    onClick = { onFavoriteClick(product.id) },
+                AsyncImage(
+                    model = product.images,
+                    contentDescription = product.title,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
+                )
+
+                Row(
                     modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp)
+                ) {
+                    IconButton(
+                        onClick = { onFavoriteClick(product.id) },
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .background(Color.Black.copy(alpha = 0.2f))
+                            .size(32.dp)
+                    ) {
+                        Icon(
+                            imageVector = if (product.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            contentDescription = "Favorite",
+                            tint = if (product.isFavorite) Color.Red else Color.White,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
+
+                IconButton(
+                    onClick = { onAddToCart(product) },
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(8.dp)
                         .clip(CircleShape)
                         .background(Color.Black.copy(alpha = 0.2f))
                         .size(32.dp)
                 ) {
                     Icon(
-                        imageVector = if (product.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                        contentDescription = "Favorite",
-                        tint = if (product.isFavorite) Color.Red else Color.White,
+                        imageVector = Icons.Default.AddShoppingCart,
+                        contentDescription = "Add to Cart",
+                        tint = Color.White,
                         modifier = Modifier.size(16.dp)
                     )
                 }
             }
-
-            IconButton(
-                onClick = { onAddToCart(product) },
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(8.dp)
-                    .clip(CircleShape)
-                    .background(Color.Black.copy(alpha = 0.2f))
-                    .size(32.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.AddShoppingCart,
-                    contentDescription = "Add to Cart",
-                    tint = Color.White,
-                    modifier = Modifier.size(16.dp)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = product.title,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                textAlign = TextAlign.Center
+            )
+            if (product.brand.isNotEmpty())
+                Text(
+                    text = product.brand,
+                    fontSize = 12.sp,
+                    color = Color.Gray
                 )
-            }
+            Text(
+                text = "$${product.price}",
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp,
+                modifier = Modifier.padding(4.dp)
+            )
         }
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = product.title,
-            fontWeight = FontWeight.Bold,
-            fontSize = 16.sp,
-            textAlign = TextAlign.Center
-        )
-        Text(
-            text = product.brand,
-            fontSize = 12.sp,
-            color = Color.Gray
-        )
-        Text(
-            text = "$${product.price}",
-            fontWeight = FontWeight.Bold,
-            fontSize = 14.sp,
-            modifier = Modifier.padding(top = 4.dp)
-        )
     }
 }
 

@@ -24,7 +24,6 @@ import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
@@ -188,15 +187,13 @@ fun SignUpScreenContent(
                     shape = MaterialTheme.shapes.large,
                     colors = textFieldColors(
                         unfocusedIndicatorColor = Color.Transparent,
-                        focusedIndicatorColor = Color(0xFF514EB7),
-                        unfocusedContainerColor = Color(0x17A9A7A5),
                         focusedContainerColor = Color.Transparent,
                     ),
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Person,
                             contentDescription = stringResource(R.string.full_name_icon),
-                            tint = Color(0xFF514EB7)
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     },
                     placeholder = { Text(stringResource(R.string.enter_your_full_name)) },
@@ -229,15 +226,13 @@ fun SignUpScreenContent(
                     shape = MaterialTheme.shapes.large,
                     colors = textFieldColors(
                         unfocusedIndicatorColor = Color.Transparent,
-                        focusedIndicatorColor = Color(0xFF514EB7),
-                        unfocusedContainerColor = Color(0x17A9A7A5),
                         focusedContainerColor = Color.Transparent,
                     ),
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Email,
                             contentDescription = stringResource(R.string.email_icon),
-                            tint = Color(0xFF514EB7)
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     },
                     placeholder = { Text(stringResource(R.string.enter_your_email)) },
@@ -271,15 +266,13 @@ fun SignUpScreenContent(
                     shape = MaterialTheme.shapes.large,
                     colors = textFieldColors(
                         unfocusedIndicatorColor = Color.Transparent,
-                        focusedIndicatorColor = Color(0xFF514EB7),
-                        unfocusedContainerColor = Color(0x17A9A7A5),
                         focusedContainerColor = Color.Transparent,
                     ),
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Phone,
                             contentDescription = stringResource(R.string.phone_number_icon),
-                            tint = Color(0xFF514EB7)
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     },
                     placeholder = { Text(stringResource(R.string.enter_your_phone_number)) },
@@ -313,15 +306,13 @@ fun SignUpScreenContent(
                     shape = MaterialTheme.shapes.large,
                     colors = textFieldColors(
                         unfocusedIndicatorColor = Color.Transparent,
-                        focusedIndicatorColor = Color(0xFF514EB7),
-                        unfocusedContainerColor = Color(0x17A9A7A5),
                         focusedContainerColor = Color.Transparent,
                     ),
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Lock,
                             contentDescription = stringResource(R.string.password_icon),
-                            tint = Color(0xFF514EB7)
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     },
                     placeholder = { Text(stringResource(R.string.enter_your_password)) },
@@ -367,15 +358,13 @@ fun SignUpScreenContent(
                     shape = MaterialTheme.shapes.large,
                     colors = textFieldColors(
                         unfocusedIndicatorColor = Color.Transparent,
-                        focusedIndicatorColor = Color(0xFF514EB7),
-                        unfocusedContainerColor = Color(0x17A9A7A5),
                         focusedContainerColor = Color.Transparent,
                     ),
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Lock,
                             contentDescription = stringResource(R.string.confirm_password_icon),
-                            tint = Color(0xFF514EB7)
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     },
                     placeholder = { Text(stringResource(R.string.re_enter_your_password)) },
@@ -419,7 +408,7 @@ fun SignUpScreenContent(
                         onCheckedChange = onAgreeToTermsChange,
                         enabled = !state.isLoading,
                         colors = CheckboxDefaults.colors(
-                            checkedColor = Color(0xFF514EB7),
+                            checkedColor = MaterialTheme.colorScheme.primary,
                         )
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -456,10 +445,6 @@ fun SignUpScreenContent(
                         .fillMaxWidth()
                         .height(50.dp),
                     enabled = isSignUpEnabled,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF514EB7),
-                        contentColor = Color.White
-                    )
                 ) {
                     if (state.isLoading) {
                         CircularProgressIndicator(
@@ -495,7 +480,6 @@ fun SignUpScreenContent(
                             stringResource(R.string.sign_in),
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.SemiBold,
-                            color = Color(0xFF514EB7)
                         )
                     }
                 }

@@ -17,11 +17,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -30,6 +30,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -55,7 +56,6 @@ import com.example.pixelbit.R
 import com.example.pixelbit.domain.model.Banner
 import com.example.pixelbit.domain.model.User
 import com.example.pixelbit.presentation.features.category.CategoryItem
-import com.example.pixelbit.presentation.theme.Purple40
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
@@ -86,20 +86,20 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
                         CircularProgressIndicator()
                     }
                 } else {
-                    LazyVerticalGrid(
+                    LazyVerticalStaggeredGrid(
                         modifier = Modifier.fillMaxSize(),
-                        columns = GridCells.Adaptive(150.dp),
+                        columns = StaggeredGridCells.Adaptive(150.dp),
                         contentPadding = PaddingValues(
                             start = 16.dp,
                             end = 16.dp,
                         ),
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(24.dp)
+                        verticalItemSpacing = 24.dp
                     ) {
                         if (selectedTabIndex == 0) {
-                            item(span = { GridItemSpan(maxLineSpan) }) { HomeBanner(banners) }
+                            item(span = StaggeredGridItemSpan.FullLine) { HomeBanner(banners) }
 
-                            item(span = { GridItemSpan(maxLineSpan) }) {
+                            item(span = StaggeredGridItemSpan.FullLine) {
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -114,7 +114,7 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
                                     )
                                     Text(
                                         "See All",
-                                        color = Purple40,
+                                        color = MaterialTheme.colorScheme.primary,
                                         fontWeight = FontWeight.SemiBold
                                     )
                                 }
@@ -131,7 +131,7 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
                         } else {
                             itemsIndexed(
                                 categories,
-                                span = { _, _ -> GridItemSpan(maxLineSpan) }) { index, category ->
+                                span = { _, _ -> StaggeredGridItemSpan.FullLine }) { index, category ->
                                 CategoryItem(category = category, index = index)
                             }
                         }
@@ -160,7 +160,9 @@ fun HomeTabs(selectedIndex: Int, onTabSelected: (Int) -> Unit) {
                 "Home",
                 fontWeight = if (selectedIndex == 0) FontWeight.Bold else FontWeight.Normal,
                 fontSize = 16.sp,
-                color = if (selectedIndex == 0) Color.DarkGray else Color.Gray
+                color = if (selectedIndex == 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(
+                    alpha = .5f
+                )
             )
             Spacer(modifier = Modifier.height(8.dp))
             if (selectedIndex == 0) {
@@ -168,7 +170,7 @@ fun HomeTabs(selectedIndex: Int, onTabSelected: (Int) -> Unit) {
                     modifier = Modifier
                         .width(100.dp)
                         .height(2.dp)
-                        .background(Purple40)
+                        .background(MaterialTheme.colorScheme.primary)
                 )
             } else {
                 Spacer(modifier = Modifier.height(2.dp))
@@ -194,7 +196,7 @@ fun HomeTabs(selectedIndex: Int, onTabSelected: (Int) -> Unit) {
                     modifier = Modifier
                         .width(100.dp)
                         .height(2.dp)
-                        .background(Purple40)
+                        .background(MaterialTheme.colorScheme.primary)
                 )
             } else {
                 Spacer(modifier = Modifier.height(2.dp))
