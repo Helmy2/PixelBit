@@ -44,8 +44,6 @@ class FavoritesScreenTest {
 
     @Test
     fun givenFavoritesScreen_whenDisplayed_thenTitleIsVisible() {
-        // Given
-        whenever(repository.getFavoriteProducts()).thenReturn(flowOf(Result.success(emptyList())))
 
         // When
         composeTestRule.setContent {
@@ -58,8 +56,6 @@ class FavoritesScreenTest {
 
     @Test
     fun givenNoFavorites_whenScreenLoaded_thenEmptyStateIsDisplayed() {
-        // Given
-        whenever(repository.getFavoriteProducts()).thenReturn(flowOf(Result.success(emptyList())))
 
         // When
         composeTestRule.setContent {

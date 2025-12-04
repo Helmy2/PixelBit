@@ -36,7 +36,6 @@ class FavoritesRepositoryImplTest {
     fun givenNoUser_whenAddToFavorites_thenReturnsError() = runTest {
         // Given
         whenever(firebaseAuth.currentUser).thenReturn(null)
-        repository = FavoritesRepositoryImpl(firebaseAuth, firestore)
 
         // When
         val result = repository.addToFavorites("product_1")
@@ -49,7 +48,6 @@ class FavoritesRepositoryImplTest {
     fun givenNoUser_whenRemoveFromFavorites_thenReturnsError() = runTest {
         // Given
         whenever(firebaseAuth.currentUser).thenReturn(null)
-        repository = FavoritesRepositoryImpl(firebaseAuth, firestore)
 
         // When
         val result = repository.removeFromFavorites("product_1")
@@ -62,7 +60,6 @@ class FavoritesRepositoryImplTest {
     fun givenNoUser_whenIsFavorite_thenReturnsFalse() = runTest {
         // Given
         whenever(firebaseAuth.currentUser).thenReturn(null)
-        repository = FavoritesRepositoryImpl(firebaseAuth, firestore)
 
         // When
         val result = repository.isFavorite("product_1")

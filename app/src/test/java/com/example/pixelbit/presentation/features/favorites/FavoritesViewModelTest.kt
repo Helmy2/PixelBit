@@ -7,7 +7,7 @@ import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -23,7 +23,7 @@ class FavoritesViewModelTest {
 
     private lateinit var viewModel: FavoritesViewModel
     private lateinit var repository: FavoritesRepository
-    private val testDispatcher = StandardTestDispatcher()
+    private val testDispatcher = UnconfinedTestDispatcher()
     private val testProduct = Product("1", "Test Product", "Electronics",
         "Brand", "$99", "img.jpg", "Test", true)
 
@@ -45,11 +45,12 @@ class FavoritesViewModelTest {
 
         // When
         viewModel = FavoritesViewModel(repository)
-        testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
         viewModel.uiState.test {
-            assertThat(awaitItem().favoriteProducts).isEmpty()
+            val state = awaitItem()
+            assertThat(state.favoriteProducts).isEmpty()
+            assertThat(state.isLoading).isFalse()
         }
     }
 
@@ -60,11 +61,12 @@ class FavoritesViewModelTest {
 
         // When
         viewModel = FavoritesViewModel(repository)
-        testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
         viewModel.uiState.test {
-            assertThat(awaitItem().favoriteProducts).hasSize(1)
+            val state = awaitItem()
+            assertThat(state.favoriteProducts).hasSize(1)
+            assertThat(state.isLoading).isFalse()
         }
     }
 
@@ -75,11 +77,12 @@ class FavoritesViewModelTest {
 
         // When
         viewModel = FavoritesViewModel(repository)
-        testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
         viewModel.uiState.test {
-            assertThat(awaitItem().errorMessage).isNotNull()
+            val state = awaitItem()
+            assertThat(state.errorMessage).isNotNull()
+            assertThat(state.isLoading).isFalse()
         }
     }
 
@@ -89,11 +92,9 @@ class FavoritesViewModelTest {
         whenever(repository.getFavoriteProducts()).thenReturn(flowOf(Result.success(listOf(testProduct))))
         whenever(repository.removeFromFavorites("1")).thenReturn(Result.success(Unit))
         viewModel = FavoritesViewModel(repository)
-        testDispatcher.scheduler.advanceUntilIdle()
 
         // When
         viewModel.removeFromFavorites("1")
-        testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
         verify(repository).removeFromFavorites("1")
@@ -105,15 +106,15 @@ class FavoritesViewModelTest {
         whenever(repository.getFavoriteProducts()).thenReturn(flowOf(Result.success(listOf(testProduct))))
         whenever(repository.removeFromFavorites("1")).thenReturn(Result.failure(Exception("Failed")))
         viewModel = FavoritesViewModel(repository)
-        testDispatcher.scheduler.advanceUntilIdle()
 
         // When
         viewModel.removeFromFavorites("1")
-        testDispatcher.scheduler.advanceUntilIdle()
 
         // Then
         viewModel.uiState.test {
-            assertThat(awaitItem().errorMessage).isNotNull()
+            val state = awaitItem()
+            assertThat(state.errorMessage).isNotNull()
+            assertThat(state.isRemoving).isFalse()
         }
     }
 }
