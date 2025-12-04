@@ -38,7 +38,7 @@ jobs:
         env:
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
         run: |
-          echo "$SIGNING_KEY" | base64 -d > app/release-keystore.jks
+          echo "$SIGNING_KEY" | base64 -d > release-keystore.jks
 
       - name: Extract version from tag
         id: get_version
@@ -48,13 +48,13 @@ jobs:
 
       - name: Build and Sign Release APK
         env:
-          KEYSTORE_PATH: ../release-keystore.jks
+          KEYSTORE_FILE: ${{ github.workspace }}/release-keystore.jks
           KEYSTORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
           ./gradlew assembleRelease \
-            -Pandroid.injected.signing.store.file=$KEYSTORE_PATH \
+            -Pandroid.injected.signing.store.file=$KEYSTORE_FILE \
             -Pandroid.injected.signing.store.password=$KEYSTORE_PASSWORD \
             -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
             -Pandroid.injected.signing.key.password=$KEY_PASSWORD \
@@ -62,13 +62,13 @@ jobs:
 
       - name: Build and Sign Release AAB
         env:
-          KEYSTORE_PATH: ../release-keystore.jks
+          KEYSTORE_FILE: ${{ github.workspace }}/release-keystore.jks
           KEYSTORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
           ./gradlew bundleRelease \
-            -Pandroid.injected.signing.store.file=$KEYSTORE_PATH \
+            -Pandroid.injected.signing.store.file=$KEYSTORE_FILE \
             -Pandroid.injected.signing.store.password=$KEYSTORE_PASSWORD \
             -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
             -Pandroid.injected.signing.key.password=$KEY_PASSWORD \
@@ -76,7 +76,11 @@ jobs:
 
       - name: Rename signed APK
         run: |
-          cp app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/PixelBit-${{ steps.get_version.outputs.VERSION_NUMBER }}.apk
+          mv app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/PixelBit-${{ steps.get_version.outputs.VERSION_NUMBER }}.apk
+
+      - name: Verify APK signing
+        run: |
+          $ANDROID_HOME/build-tools/34.0.0/apksigner verify --verbose app/build/outputs/apk/release/PixelBit-${{ steps.get_version.outputs.VERSION_NUMBER }}.apk
 
       - name: Generate Release Notes
         id: release_notes
@@ -86,7 +90,7 @@ jobs:
             echo "## PixelBit ${{ steps.get_version.outputs.VERSION }}"
             echo ""
             echo "### What's New"
-            git log $(git describe --tags --abbrev=0 HEAD^)..HEAD --pretty=format:"- %s" || echo "- Initial release"
+            git log $(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")..HEAD --pretty=format:"- %s" || echo "- Initial release"
             echo ""
             echo ""
             echo "### 📦 Downloads"
@@ -101,7 +105,7 @@ jobs:
           } >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.get_version.outputs.VERSION }}
           name: PixelBit ${{ steps.get_version.outputs.VERSION }}
@@ -121,6 +125,6 @@ jobs:
           path: app/build/outputs/apk/release/PixelBit-${{ steps.get_version.outputs.VERSION_NUMBER }}.apk
           retention-days: 90
 
-      - name: Cleanup
+      - name: Cleanup Keystore
         if: always()
-        run: rm -f app/release-keystore.jks
+        run: rm -f release-keystore.jks
