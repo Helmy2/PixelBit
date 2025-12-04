@@ -1,0 +1,126 @@
+name: Android CD - Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Build APK and Create Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create google-services.json
+        env:
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: echo "$GOOGLE_SERVICES_JSON" > app/google-services.json
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Decode Keystore
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+        run: |
+          echo "$SIGNING_KEY" | base64 -d > app/release-keystore.jks
+
+      - name: Extract version from tag
+        id: get_version
+        run: |
+          echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          echo "VERSION_NUMBER=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Build and Sign Release APK
+        env:
+          KEYSTORE_PATH: ../release-keystore.jks
+          KEYSTORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          ./gradlew assembleRelease \
+            -Pandroid.injected.signing.store.file=$KEYSTORE_PATH \
+            -Pandroid.injected.signing.store.password=$KEYSTORE_PASSWORD \
+            -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
+            -Pandroid.injected.signing.key.password=$KEY_PASSWORD \
+            --stacktrace
+
+      - name: Build and Sign Release AAB
+        env:
+          KEYSTORE_PATH: ../release-keystore.jks
+          KEYSTORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          ./gradlew bundleRelease \
+            -Pandroid.injected.signing.store.file=$KEYSTORE_PATH \
+            -Pandroid.injected.signing.store.password=$KEYSTORE_PASSWORD \
+            -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
+            -Pandroid.injected.signing.key.password=$KEY_PASSWORD \
+            --stacktrace
+
+      - name: Rename signed APK
+        run: |
+          cp app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/PixelBit-${{ steps.get_version.outputs.VERSION_NUMBER }}.apk
+
+      - name: Generate Release Notes
+        id: release_notes
+        run: |
+          {
+            echo 'RELEASE_NOTES<<EOF'
+            echo "## PixelBit ${{ steps.get_version.outputs.VERSION }}"
+            echo ""
+            echo "### What's New"
+            git log $(git describe --tags --abbrev=0 HEAD^)..HEAD --pretty=format:"- %s" || echo "- Initial release"
+            echo ""
+            echo ""
+            echo "### 📦 Downloads"
+            echo "- **APK**: For direct installation on Android devices"
+            echo "- **AAB**: For Google Play Store distribution"
+            echo ""
+            echo "### ℹ️ Installation"
+            echo "1. Download the APK file"
+            echo "2. Enable 'Install from Unknown Sources' in your Android settings"
+            echo "3. Install the APK"
+            echo 'EOF'
+          } >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.get_version.outputs.VERSION }}
+          name: PixelBit ${{ steps.get_version.outputs.VERSION }}
+          body: ${{ steps.release_notes.outputs.RELEASE_NOTES }}
+          draft: false
+          prerelease: false
+          files: |
+            app/build/outputs/apk/release/PixelBit-${{ steps.get_version.outputs.VERSION_NUMBER }}.apk
+            app/build/outputs/bundle/release/app-release.aab
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PixelBit-${{ steps.get_version.outputs.VERSION_NUMBER }}
+          path: app/build/outputs/apk/release/PixelBit-${{ steps.get_version.outputs.VERSION_NUMBER }}.apk
+          retention-days: 90
+
+      - name: Cleanup
+        if: always()
+        run: rm -f app/release-keystore.jks
