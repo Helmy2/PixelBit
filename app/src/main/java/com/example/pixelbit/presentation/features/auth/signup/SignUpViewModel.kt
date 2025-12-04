@@ -94,6 +94,7 @@ class SignUpViewModel(
     }
 
     private fun validateInput(state: SignUpState): String? {
+        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\$".toRegex()
         return when {
             state.name.isBlank() || state.name.length < 2 ->
                 "Please enter your full name (at least 2 characters)"
@@ -104,7 +105,7 @@ class SignUpViewModel(
             state.email.isBlank() ->
                 "Please enter your email address"
 
-            !android.util.Patterns.EMAIL_ADDRESS.matcher(state.email).matches() ->
+            !emailRegex.matches(state.email) ->
                 "Please enter a valid email address"
 
 
