@@ -27,7 +27,7 @@ class OnboardingViewModel(
     private fun loadOnboardingData() {
         viewModelScope.launch {
             val items = onboardingRepository.getOnboardingItems()
-            _uiState.update { it.copy(onboardingItems = items, isLoading = false) }
+            _uiState.update { it.copy(onboardingItems = items) }
         }
     }
 
