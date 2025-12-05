@@ -137,7 +137,7 @@ fun CartScreen(
 }
 
 @Composable
-private fun CartContent(
+fun CartContent(
     uiState: CartUiState,
     onQuantityIncrease: (String) -> Unit,
     onQuantityDecrease: (String) -> Unit,
