@@ -1,36 +1,42 @@
 package com.example.pixelbit.presentation.features.profile
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.VerifiedUser
-import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -91,6 +97,8 @@ fun ProfileScreen(
         ProfileContent(
             uiState = uiState,
             onLogout = viewModel::signOut,
+            onMyOrdersClick = viewModel::onMyOrdersClick,
+            onManageAddressClick = viewModel::onManageAddressClick,
             modifier = Modifier.padding(paddingValues)
         )
     }
@@ -100,6 +108,8 @@ fun ProfileScreen(
 private fun ProfileContent(
     uiState: ProfileUiState,
     onLogout: () -> Unit,
+    onMyOrdersClick: () -> Unit,
+    onManageAddressClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -116,7 +126,9 @@ private fun ProfileContent(
             uiState.user != null -> {
                 UserProfile(
                     user = uiState.user,
-                    onLogout = onLogout
+                    onLogout = onLogout,
+                    onMyOrdersClick = onMyOrdersClick,
+                    onManageAddressClick = onManageAddressClick
                 )
             }
         }
@@ -126,7 +138,9 @@ private fun ProfileContent(
 @Composable
 private fun UserProfile(
     user: User,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    onMyOrdersClick: () -> Unit,
+    onManageAddressClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -135,31 +149,17 @@ private fun UserProfile(
             .fillMaxSize()
             .padding(16.dp)
             .navigationBarsPadding(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         ProfileHeader(user)
-        Spacer(modifier = Modifier.height(32.dp))
-        ProfileInfoItem(
-            icon = Icons.Default.Email,
-            label = "Email",
-            value = user.email
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        ProfileInfoItem(
-            icon = Icons.Default.Phone,
-            label = "Phone",
-            value = user.phone.ifEmpty { "Not provided" }
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        ProfileInfoItem(
-            icon = Icons.Default.VerifiedUser,
-            label = "Email Verification",
-            value = if (user.isEmailVerified) "Verified" else "Not Verified"
-        )
-        Spacer(modifier = Modifier.height(32.dp))
-        Button(
+        AccountInfoCard(user)
+        SettingsCard(onMyOrdersClick, onManageAddressClick)
+        TextButton(
             onClick = onLogout,
-            modifier = Modifier.fillMaxWidth()
+            colors = ButtonDefaults.textButtonColors(
+                contentColor = MaterialTheme.colorScheme.error
+            )
         ) {
             Text(text = stringResource(id = R.string.logout))
         }
@@ -197,35 +197,94 @@ private fun ProfileHeader(user: User) {
 }
 
 @Composable
+private fun AccountInfoCard(user: User) {
+    Card(elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            ProfileInfoItem(
+                icon = Icons.Default.Email,
+                label = stringResource(id = R.string.email_label),
+                value = user.email
+            )
+            HorizontalDivider()
+            ProfileInfoItem(
+                icon = Icons.Default.Phone,
+                label = stringResource(id = R.string.phone_label),
+                value = user.phone.ifEmpty { stringResource(id = R.string.not_provided) }
+            )
+            HorizontalDivider()
+            ProfileInfoItem(
+                icon = Icons.Default.VerifiedUser,
+                label = stringResource(id = R.string.email_verification_label),
+                value = if (user.isEmailVerified) stringResource(id = R.string.verified) else stringResource(
+                    id = R.string.not_verified
+                )
+            )
+        }
+    }
+}
+
+@Composable
+private fun SettingsCard(
+    onMyOrdersClick: () -> Unit,
+    onManageAddressClick: () -> Unit
+) {
+    Card(elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)) {
+        Column {
+            SettingsItem(
+                icon = Icons.AutoMirrored.Filled.List,
+                text = stringResource(id = R.string.my_orders),
+                onClick = onMyOrdersClick
+            )
+            HorizontalDivider()
+            SettingsItem(
+                icon = Icons.Default.LocationOn,
+                text = stringResource(id = R.string.manage_address),
+                onClick = onManageAddressClick
+            )
+        }
+    }
+}
+
+@Composable
 private fun ProfileInfoItem(
     icon: ImageVector,
     label: String,
     value: String
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = label,
-            modifier = Modifier.size(24.dp),
-            tint = MaterialTheme.colorScheme.primary
-        )
-        Spacer(modifier = Modifier.width(16.dp))
-        Column {
-            Text(
-                text = label,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-            Text(
-                text = value,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface
+    ListItem(
+        headlineContent = { Text(value) },
+        supportingContent = { Text(label) },
+        leadingContent = {
+            Icon(
+                imageVector = icon,
+                contentDescription = label
             )
         }
-    }
+    )
+}
+
+@Composable
+private fun SettingsItem(
+    icon: ImageVector,
+    text: String,
+    onClick: () -> Unit
+) {
+    ListItem(
+        modifier = Modifier.clickable { onClick() },
+        headlineContent = { Text(text) },
+        leadingContent = {
+            Icon(
+                imageVector = icon,
+                contentDescription = text
+            )
+        },
+        trailingContent = {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = null
+            )
+        }
+    )
 }
 
 @Preview(showBackground = true)
@@ -244,7 +303,9 @@ fun ProfileScreenPreview() {
                 isLoading = false,
                 errorMessage = null
             ),
-            onLogout = {}
+            onLogout = {},
+            onMyOrdersClick = {},
+            onManageAddressClick = {}
         )
     }
 }
@@ -257,7 +318,9 @@ fun ProfileScreenLoadingPreview() {
             uiState = ProfileUiState(
                 isLoading = true
             ),
-            onLogout = {}
+            onLogout = {},
+            onMyOrdersClick = {},
+            onManageAddressClick = {}
         )
     }
 }

@@ -42,6 +42,9 @@ sealed class Screen {
 
     @Serializable
     data object Checkout : Screen()
+
+    @Serializable
+    data object Address : Screen()
 }
 
 data class TopLevelDestination(

@@ -65,12 +65,10 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.pixelbit.R
 import com.example.pixelbit.domain.model.CartItem
-import com.example.pixelbit.presentation.theme.Purple40
 import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CartScreen(
-    onCheckoutClick: () -> Unit,
     viewModel: CartViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -122,7 +120,7 @@ fun CartScreen(
                 item?.let { viewModel.updateQuantity(cartItemId, it.quantity - 1) }
             },
             onRemoveItem = viewModel::removeItem,
-            onCheckoutClick = onCheckoutClick,
+            onCheckoutClick = viewModel::onCheckoutClick,
             modifier = Modifier.padding(paddingValues)
         )
     }
@@ -321,7 +319,7 @@ private fun CartItemCard(
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp
                         ),
-                        color = Purple40
+                        color = MaterialTheme.colorScheme.primary
                     )
 
                     Row(
@@ -336,7 +334,7 @@ private fun CartItemCard(
                             Icon(
                                 imageVector = if (cartItem.quantity == 1) Icons.Default.Delete else Icons.Default.Remove,
                                 contentDescription = stringResource(R.string.decrease_quantity),
-                                tint = if (cartItem.quantity == 1) Color.Red else Purple40,
+                                tint = if (cartItem.quantity == 1) Color.Red else MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(18.dp)
                             )
                         }
@@ -358,7 +356,7 @@ private fun CartItemCard(
                             Icon(
                                 imageVector = Icons.Default.Add,
                                 contentDescription = stringResource(R.string.increase_quantity),
-                                tint = Purple40,
+                                tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(18.dp)
                             )
                         }
@@ -441,7 +439,7 @@ private fun PriceSummaryCard(
                         fontWeight = FontWeight.Bold,
                         fontSize = 24.sp
                     ),
-                    color = Purple40
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
 
@@ -453,9 +451,6 @@ private fun PriceSummaryCard(
                     .fillMaxWidth()
                     .height(56.dp),
                 shape = RoundedCornerShape(28.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Purple40
-                ),
                 enabled = !uiState.isUpdating
             ) {
                 Text(
