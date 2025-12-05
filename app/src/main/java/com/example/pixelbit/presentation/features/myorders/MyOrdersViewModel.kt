@@ -1,64 +1,56 @@
-package com.example.pixelbit.presentation.features.profile
+package com.example.pixelbit.presentation.features.myorders
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.pixelbit.domain.model.User
-import com.example.pixelbit.domain.repository.AuthRepository
+import com.example.pixelbit.domain.model.Order
+import com.example.pixelbit.domain.repository.OrderRepository
 import com.example.pixelbit.presentation.navigation.AppNavigator
-import com.example.pixelbit.presentation.navigation.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-data class ProfileUiState(
-    val user: User? = null,
+data class MyOrdersUiState(
+    val orders: List<Order> = emptyList(),
     val isLoading: Boolean = true,
     val errorMessage: String? = null
 )
 
-class ProfileViewModel(
-    private val authRepository: AuthRepository,
+class MyOrdersViewModel(
+    private val orderRepository: OrderRepository,
     private val appNavigator: AppNavigator
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ProfileUiState())
-    val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(MyOrdersUiState())
+    val uiState: StateFlow<MyOrdersUiState> = _uiState.asStateFlow()
 
     init {
-        loadProfile()
+        loadOrders()
     }
 
-    private fun loadProfile() {
+    fun onBackClicked() {
+        appNavigator.back()
+    }
+
+    private fun loadOrders() {
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
 
-            authRepository.getProfileFlow().collect { result ->
-                result.onSuccess { user ->
+            orderRepository.getOrders().collect { result ->
+                result.onSuccess { orders ->
                     _uiState.value = _uiState.value.copy(
-                        user = user,
+                        orders = orders,
                         isLoading = false,
                         errorMessage = null
                     )
                 }.onFailure { error ->
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        errorMessage = error.message ?: "Failed to load profile"
+                        errorMessage = error.message ?: "Failed to load orders"
                     )
                 }
             }
         }
-    }
-
-    fun signOut() {
-        viewModelScope.launch {
-            authRepository.signOut()
-            appNavigator.addAsStart(Screen.Onboarding)
-        }
-    }
-
-    fun onMyOrdersClick() {
-        appNavigator.add(Screen.MyOrders)
     }
 
     fun clearError() {

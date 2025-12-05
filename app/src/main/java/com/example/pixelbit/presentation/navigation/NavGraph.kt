@@ -26,6 +26,7 @@ import com.example.pixelbit.presentation.features.cart.CartScreen
 import com.example.pixelbit.presentation.features.checkout.CheckoutScreen
 import com.example.pixelbit.presentation.features.favorites.FavoritesScreen
 import com.example.pixelbit.presentation.features.home.HomeScreen
+import com.example.pixelbit.presentation.features.myorders.MyOrdersScreen
 import com.example.pixelbit.presentation.features.onboarding.OnboardingScreen
 import com.example.pixelbit.presentation.features.profile.ProfileScreen
 
@@ -157,6 +158,7 @@ fun NavGraph(
                 }
 
                 entry<Screen.MyOrders> {
+                    MyOrdersScreen()
                 }
 
                 entry<Screen.Favorites> {

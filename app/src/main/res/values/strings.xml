@@ -127,4 +127,7 @@
     <string name="place_order">Place Order</string>
     <string name="quantity_format">Qty: %d</string>
 
+    <!-- My Orders Screen -->
+    <string name="my_orders">My Orders</string>
+    <string name="no_orders_yet">You have no orders yet.</string>
 </resources>

@@ -91,6 +91,7 @@ fun ProfileScreen(
         ProfileContent(
             uiState = uiState,
             onLogout = viewModel::signOut,
+            onMyOrdersClick = viewModel::onMyOrdersClick,
             modifier = Modifier.padding(paddingValues)
         )
     }
@@ -100,6 +101,7 @@ fun ProfileScreen(
 private fun ProfileContent(
     uiState: ProfileUiState,
     onLogout: () -> Unit,
+    onMyOrdersClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -116,7 +118,8 @@ private fun ProfileContent(
             uiState.user != null -> {
                 UserProfile(
                     user = uiState.user,
-                    onLogout = onLogout
+                    onLogout = onLogout,
+                    onMyOrdersClick = onMyOrdersClick
                 )
             }
         }
@@ -126,7 +129,8 @@ private fun ProfileContent(
 @Composable
 private fun UserProfile(
     user: User,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    onMyOrdersClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -157,6 +161,13 @@ private fun UserProfile(
             value = if (user.isEmailVerified) "Verified" else "Not Verified"
         )
         Spacer(modifier = Modifier.height(32.dp))
+        Button(
+            onClick = onMyOrdersClick,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(text = stringResource(id = R.string.my_orders))
+        }
+        Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = onLogout,
             modifier = Modifier.fillMaxWidth()
@@ -244,7 +255,8 @@ fun ProfileScreenPreview() {
                 isLoading = false,
                 errorMessage = null
             ),
-            onLogout = {}
+            onLogout = {},
+            onMyOrdersClick = {}
         )
     }
 }
@@ -257,7 +269,8 @@ fun ProfileScreenLoadingPreview() {
             uiState = ProfileUiState(
                 isLoading = true
             ),
-            onLogout = {}
+            onLogout = {},
+            onMyOrdersClick = {}
         )
     }
 }
