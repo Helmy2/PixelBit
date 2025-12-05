@@ -1,6 +1,7 @@
 package com.example.pixelbit.presentation.features.checkout
 
 import android.content.res.Configuration
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,10 +19,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -33,14 +37,19 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.pixelbit.R
+import com.example.pixelbit.domain.model.Address
 import com.example.pixelbit.domain.model.CartItem
 import org.koin.androidx.compose.koinViewModel
 
@@ -122,7 +131,7 @@ private fun CheckoutContent(
                     style = MaterialTheme.typography.headlineSmall
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Button(onClick = { viewModel.onBackClicked() }) {
+                Button(onClick = { viewModel.onContinueShopping() }) {
                     Text(stringResource(id = R.string.continue_shopping))
                 }
             }
@@ -137,7 +146,7 @@ private fun CheckoutContent(
                     style = MaterialTheme.typography.titleMedium
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Button(onClick = { viewModel.onBackClicked() }) {
+                Button(onClick = { viewModel.onContinueShopping() }) {
                     Text(stringResource(id = R.string.continue_shopping))
                 }
             }
@@ -153,6 +162,9 @@ private fun CheckoutContent(
                             .fillMaxHeight(),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
+                        item {
+                            AddressSelection(uiState, viewModel)
+                        }
                         items(uiState.checkoutItems) { item ->
                             CheckoutItem(item = item, isLandscape = true)
                             HorizontalDivider()
@@ -193,6 +205,9 @@ private fun CheckoutContent(
             } else {
                 Column(modifier = Modifier.fillMaxSize()) {
                     LazyColumn(modifier = Modifier.weight(1f)) {
+                        item {
+                            AddressSelection(uiState, viewModel)
+                        }
                         items(uiState.checkoutItems) { item ->
                             CheckoutItem(item = item, isLandscape = false)
                             HorizontalDivider()
@@ -225,6 +240,38 @@ private fun CheckoutContent(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun AddressSelection(uiState: CheckoutUiState, viewModel: CheckoutViewModel) {
+    var expanded by remember { mutableStateOf(false) }
+
+    Column {
+        Text(text = "Shipping Address", style = MaterialTheme.typography.titleMedium)
+        Spacer(modifier = Modifier.height(8.dp))
+        if (uiState.addresses.isEmpty()) {
+            Button(onClick = { viewModel.onAddAddressClicked() }) {
+                Text(stringResource(id = R.string.add_address))
+            }
+        } else {
+            Row(modifier = Modifier.clickable { expanded = true }) {
+                Text(text = uiState.selectedAddress?.let { "${it.street}, ${it.city}" }
+                    ?: "Select an address")
+                Icon(Icons.Default.ArrowDropDown, contentDescription = null)
+            }
+            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                uiState.addresses.forEach { address ->
+                    DropdownMenuItem(
+                        text = { Text("${address.street}, ${address.city}") },
+                        onClick = { viewModel.onAddressSelected(address); expanded = false })
+                }
+            }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = "Payment Method", style = MaterialTheme.typography.titleMedium)
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(stringResource(id = R.string.cash_on_delivery))
     }
 }
 
@@ -323,5 +370,58 @@ fun PriceSummary(subtotal: Double, shipping: Double, total: Double, isLandscape:
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CheckoutScreenPreview() {
+    MaterialTheme {
+        CheckoutContent(
+            uiState = CheckoutUiState(
+                checkoutItems = listOf(
+                    CartItem(
+                        title = "Samsung A54",
+                        brand = "Samsung",
+                        price = "300.0",
+                    )
+                ),
+                isLoading = false,
+                subtotal = 300.0,
+                shipping = 5.0,
+                total = 305.0,
+                addresses = listOf(Address(street = "123 Main St", city = "Anytown")),
+                selectedAddress = Address(street = "123 Main St", city = "Anytown")
+            ),
+            viewModel = koinViewModel()
+        )
+    }
+}
+
+@Preview(
+    showBackground = true,
+    device = "spec:width=411dp,height=891dp,dpi=420,orientation=landscape"
+)
+@Composable
+fun CheckoutScreenPreviewLandscape() {
+    MaterialTheme {
+        CheckoutContent(
+            uiState = CheckoutUiState(
+                checkoutItems = listOf(
+                    CartItem(
+                        title = "Samsung A54",
+                        brand = "Samsung",
+                        price = "300.0",
+                    )
+                ),
+                isLoading = false,
+                subtotal = 300.0,
+                shipping = 5.0,
+                total = 305.0,
+                addresses = listOf(Address(street = "123 Main St", city = "Anytown")),
+                selectedAddress = Address(street = "123 Main St", city = "Anytown")
+            ),
+            viewModel = koinViewModel()
+        )
     }
 }

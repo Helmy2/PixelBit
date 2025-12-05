@@ -96,6 +96,12 @@
     <!-- Profile Screen -->
     <string name="my_profile">My Profile</string>
     <string name="logout">Logout</string>
+    <string name="email_label">Email</string>
+    <string name="phone_label">Phone</string>
+    <string name="email_verification_label">Email Verification</string>
+    <string name="not_provided">Not provided</string>
+    <string name="verified">Verified</string>
+    <string name="not_verified">Not Verified</string>
 
     <!-- Cart Screen -->
     <string name="my_cart">My Cart</string>
@@ -126,8 +132,25 @@
     <string name="your_cart_is_empty">Your cart is empty.</string>
     <string name="place_order">Place Order</string>
     <string name="quantity_format">Qty: %d</string>
+    <string name="cash_on_delivery">Cash on Delivery</string>
 
     <!-- My Orders Screen -->
     <string name="my_orders">My Orders</string>
     <string name="no_orders_yet">You have no orders yet.</string>
+    <string name="shipping_address">Shipping Address</string>
+    <string name="order_number">Order #%s</string>
+    <string name="placed_on">Placed on: %s</string>
+    <string name="total_price">Total: %s</string>
+
+    <!-- Address Screen -->
+    <string name="manage_address">Manage Address</string>
+    <string name="add_address">Add Address</string>
+    <string name="edit_address">Edit Address</string>
+    <string name="delete_address">Delete Address</string>
+    <string name="no_addresses_found">No addresses found. Please add a new one.</string>
+    <string name="default_address">Default</string>
+    <string name="set_as_default">Set as Default</string>
+    <string name="street">Street</string>
+    <string name="city">City</string>
+    <string name="save">Save</string>
 </resources>

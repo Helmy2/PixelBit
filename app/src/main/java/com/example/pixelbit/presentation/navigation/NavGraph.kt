@@ -18,6 +18,7 @@ import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDe
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import com.example.pixelbit.presentation.features.address.AddressScreen
 import com.example.pixelbit.presentation.features.auth.forgotpassword.ForgotPasswordScreen
 import com.example.pixelbit.presentation.features.auth.login.LoginScreen
 import com.example.pixelbit.presentation.features.auth.signup.SignUpScreen
@@ -163,6 +164,10 @@ fun NavGraph(
 
                 entry<Screen.Favorites> {
                     FavoritesScreen()
+                }
+
+                entry<Screen.Address> {
+                    AddressScreen()
                 }
             }
         )

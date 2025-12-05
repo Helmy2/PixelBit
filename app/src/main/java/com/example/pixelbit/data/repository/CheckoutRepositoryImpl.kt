@@ -1,5 +1,6 @@
 package com.example.pixelbit.data.repository
 
+import com.example.pixelbit.domain.model.Address
 import com.example.pixelbit.domain.model.CartItem
 import com.example.pixelbit.domain.repository.CheckoutRepository
 import com.google.firebase.auth.FirebaseAuth
@@ -32,14 +33,15 @@ class CheckoutRepositoryImpl(
         }
     }
 
-    override suspend fun placeOrder(items: List<CartItem>): Result<Unit> {
+    override suspend fun placeOrder(items: List<CartItem>, address: Address): Result<Unit> {
         return try {
             val userId =
                 auth.currentUser?.uid ?: return Result.failure(Exception("User not logged in"))
 
             val order = hashMapOf(
                 "items" to items.map { it.toMap() },
-                "timestamp" to System.currentTimeMillis()
+                "timestamp" to System.currentTimeMillis(),
+                "address" to address
             )
 
             firestore.collection("users").document(userId).collection("orders").add(order).await()

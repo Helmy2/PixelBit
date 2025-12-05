@@ -61,6 +61,10 @@ class ProfileViewModel(
         appNavigator.add(Screen.MyOrders)
     }
 
+    fun onManageAddressClick() {
+        appNavigator.add(Screen.Address)
+    }
+
     fun clearError() {
         _uiState.value = _uiState.value.copy(errorMessage = null)
     }

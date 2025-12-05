@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.pixelbit.data.repository.AddressRepositoryImpl
 import com.example.pixelbit.data.repository.AuthRepositoryImpl
 import com.example.pixelbit.data.repository.CartRepositoryImpl
 import com.example.pixelbit.data.repository.CheckoutRepositoryImpl
@@ -11,6 +12,7 @@ import com.example.pixelbit.data.repository.FavoritesRepositoryImpl
 import com.example.pixelbit.data.repository.OnboardingRepositoryImpl
 import com.example.pixelbit.data.repository.OrderRepositoryImpl
 import com.example.pixelbit.data.repository.ShopRepositoryImpl
+import com.example.pixelbit.domain.repository.AddressRepository
 import com.example.pixelbit.domain.repository.AuthRepository
 import com.example.pixelbit.domain.repository.CartRepository
 import com.example.pixelbit.domain.repository.CheckoutRepository
@@ -18,6 +20,7 @@ import com.example.pixelbit.domain.repository.FavoritesRepository
 import com.example.pixelbit.domain.repository.OnboardingRepository
 import com.example.pixelbit.domain.repository.OrderRepository
 import com.example.pixelbit.domain.repository.ShopRepository
+import com.example.pixelbit.presentation.features.address.AddressViewModel
 import com.example.pixelbit.presentation.features.auth.forgotpassword.ForgotPasswordViewModel
 import com.example.pixelbit.presentation.features.auth.login.LoginViewModel
 import com.example.pixelbit.presentation.features.auth.signup.SignUpViewModel
@@ -55,6 +58,7 @@ val appModule = module {
     singleOf(::CartRepositoryImpl).bind<CartRepository>()
     singleOf(::CheckoutRepositoryImpl).bind<CheckoutRepository>()
     singleOf(::OrderRepositoryImpl).bind<OrderRepository>()
+    singleOf(::AddressRepositoryImpl).bind<AddressRepository>()
 
     viewModelOf(::SignUpViewModel)
     viewModelOf(::VerificationViewModel)
@@ -67,4 +71,5 @@ val appModule = module {
     viewModelOf(::CartViewModel)
     viewModelOf(::CheckoutViewModel)
     viewModelOf(::MyOrdersViewModel)
+    viewModelOf(::AddressViewModel)
 }

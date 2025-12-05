@@ -236,7 +236,10 @@ private fun FavoriteProductCard(
                 }
 
                 Text(
-                    text = stringResource(id = R.string.price_format, product.price),
+                    text = stringResource(
+                        id = R.string.price_format,
+                        product.price.toFloatOrNull() ?: 0f
+                    ),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp

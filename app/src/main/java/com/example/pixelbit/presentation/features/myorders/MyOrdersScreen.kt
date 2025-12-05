@@ -135,17 +135,26 @@ fun OrderCard(order: Order) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "Order #${order.id}",
+                    text = stringResource(id = R.string.order_number, order.id),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
                 OrderStatus(status = order.status)
             }
             Text(
-                text = "Placed on: ${formatTimestamp(order.timestamp)}",
+                text = stringResource(id = R.string.placed_on, formatTimestamp(order.timestamp)),
                 style = MaterialTheme.typography.bodySmall
             )
             Spacer(modifier = Modifier.height(16.dp))
+            order.address?.let {
+                Text(
+                    text = stringResource(id = R.string.shipping_address),
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold
+                )
+                Text("${it.street}, ${it.city}")
+                Spacer(modifier = Modifier.height(16.dp))
+            }
             order.items.forEach {
                 OrderItem(item = it)
                 HorizontalDivider()
@@ -156,15 +165,9 @@ fun OrderCard(order: Order) {
                 horizontalArrangement = Arrangement.End
             ) {
                 Text(
-                    text = stringResource(id = R.string.total) + ": ",
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
                     text = stringResource(
-                        id = R.string.price_format,
-                        order.items.sumOf { it.getTotalPrice() }
-                    ),
+                        id = R.string.total_price,
+                        order.items.sumOf { it.getTotalPrice() }),
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold
                 )
