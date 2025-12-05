@@ -35,10 +35,14 @@ fun NavGraph(
 ) {
     val windowAdaptiveInfo = currentWindowAdaptiveInfo()
 
-    val navigationSuiteType = remember(windowAdaptiveInfo, navController.shouldShowAppBar()) {
+    val isTopLevelTransition = remember(navController.shouldShowAppBar()) {
+        navController.shouldShowAppBar()
+    }
+
+    val navigationSuiteType = remember(windowAdaptiveInfo, isTopLevelTransition) {
         val calculateFromAdaptiveInfo =
             NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(windowAdaptiveInfo)
-        if (navController.shouldShowAppBar()) {
+        if (isTopLevelTransition) {
             calculateFromAdaptiveInfo
         } else {
             NavigationSuiteType.None
@@ -54,8 +58,6 @@ fun NavGraph(
         NavDisplay(
             backStack = navController.backStack,
             transitionSpec = {
-                val isTopLevelTransition = navController.shouldShowAppBar()
-
                 if (isTopLevelTransition) {
                     fadeIn(animationSpec = tween(300)) togetherWith
                             fadeOut(animationSpec = tween(300))
@@ -65,8 +67,13 @@ fun NavGraph(
                 }
             },
             popTransitionSpec = {
-                slideInHorizontally(initialOffsetX = { -it }) togetherWith
-                        slideOutHorizontally(targetOffsetX = { it })
+                if (isTopLevelTransition) {
+                    fadeIn(animationSpec = tween(300)) togetherWith
+                            fadeOut(animationSpec = tween(300))
+                } else {
+                    slideInHorizontally(initialOffsetX = { it }) togetherWith
+                            slideOutHorizontally(targetOffsetX = { -it })
+                }
             },
             predictivePopTransitionSpec = {
                 slideInHorizontally(initialOffsetX = { -it }) togetherWith
