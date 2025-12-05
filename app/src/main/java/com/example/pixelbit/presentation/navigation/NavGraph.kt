@@ -18,6 +18,7 @@ import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDe
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import com.example.pixelbit.presentation.features.address.AddressScreen
 import com.example.pixelbit.presentation.features.auth.forgotpassword.ForgotPasswordScreen
 import com.example.pixelbit.presentation.features.auth.login.LoginScreen
 import com.example.pixelbit.presentation.features.auth.signup.SignUpScreen
@@ -26,6 +27,7 @@ import com.example.pixelbit.presentation.features.cart.CartScreen
 import com.example.pixelbit.presentation.features.checkout.CheckoutScreen
 import com.example.pixelbit.presentation.features.favorites.FavoritesScreen
 import com.example.pixelbit.presentation.features.home.HomeScreen
+import com.example.pixelbit.presentation.features.myorders.MyOrdersScreen
 import com.example.pixelbit.presentation.features.onboarding.OnboardingScreen
 import com.example.pixelbit.presentation.features.profile.ProfileScreen
 
@@ -149,11 +151,7 @@ fun NavGraph(
                 }
 
                 entry<Screen.Cart> {
-                    CartScreen(
-                        onCheckoutClick = {
-                            navController.add(Screen.Checkout)
-                        }
-                    )
+                    CartScreen()
                 }
 
                 entry<Screen.Checkout> {
@@ -161,10 +159,15 @@ fun NavGraph(
                 }
 
                 entry<Screen.MyOrders> {
+                    MyOrdersScreen()
                 }
 
                 entry<Screen.Favorites> {
                     FavoritesScreen()
+                }
+
+                entry<Screen.Address> {
+                    AddressScreen()
                 }
             }
         )

@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pixelbit.domain.model.CartItem
 import com.example.pixelbit.domain.repository.CartRepository
+import com.example.pixelbit.presentation.navigation.AppNavigator
+import com.example.pixelbit.presentation.navigation.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,7 +34,8 @@ data class CartUiState(
 }
 
 class CartViewModel(
-    private val cartRepository: CartRepository
+    private val cartRepository: CartRepository,
+    private val appNavigator: AppNavigator
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CartUiState())
@@ -40,6 +43,10 @@ class CartViewModel(
 
     init {
         loadCartItems()
+    }
+
+    fun onCheckoutClick() {
+        appNavigator.add(Screen.Checkout)
     }
 
     private fun loadCartItems() {
@@ -118,4 +125,3 @@ class CartViewModel(
         _uiState.value = _uiState.value.copy(errorMessage = null)
     }
 }
-

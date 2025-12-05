@@ -69,7 +69,6 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CartScreen(
-    onCheckoutClick: () -> Unit,
     viewModel: CartViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -121,7 +120,7 @@ fun CartScreen(
                 item?.let { viewModel.updateQuantity(cartItemId, it.quantity - 1) }
             },
             onRemoveItem = viewModel::removeItem,
-            onCheckoutClick = onCheckoutClick,
+            onCheckoutClick = viewModel::onCheckoutClick,
             modifier = Modifier.padding(paddingValues)
         )
     }

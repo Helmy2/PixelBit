@@ -1,5 +1,8 @@
 package com.example.pixelbit.domain.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class CartItem(
     val id: String = "",
     val productId: String = "",
