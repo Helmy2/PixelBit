@@ -149,11 +149,7 @@ fun NavGraph(
                 }
 
                 entry<Screen.Cart> {
-                    CartScreen(
-                        onCheckoutClick = {
-                            navController.add(Screen.Checkout)
-                        }
-                    )
+                    CartScreen()
                 }
 
                 entry<Screen.Checkout> {

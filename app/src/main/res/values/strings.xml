@@ -41,6 +41,7 @@
     <string name="password_icon">Password</string>
     <string name="confirm_password_icon">Confirm Password</string>
     <string name="email_verification_icon">Email Verification</string>
+    <string name="back_arrow">Back arrow</string>
 
     <!-- Validation Messages -->
     <string name="enter_full_name_at_least_2_chars">Please enter your full name (at least 2 characters)</string>
@@ -65,6 +66,7 @@
     <string name="failed_to_sign_in">Failed to sign in</string>
     <string name="failed_to_delete_user">Failed to delete user</string>
     <string name="email_not_verified_yet">Email not verified yet. Please check your inbox.</string>
+    <string name="an_error_occurred">An error occurred</string>
 
     <!-- Login Screen -->
     <string name="login_account">Login Account</string>
@@ -89,7 +91,7 @@
     <string name="remove_from_favorites">Remove from favorites</string>
     <string name="add_to_favorites">Add to favorites</string>
     <string name="no_favorites_description">No favorites</string>
-    <string name="price_format">$%s</string>
+    <string name="price_format">$%.2f</string>
 
     <!-- Profile Screen -->
     <string name="my_profile">My Profile</string>
@@ -115,4 +117,14 @@
     <string name="increase_quantity">Increase quantity</string>
     <string name="empty_cart">Empty cart</string>
     <string name="cancel">Cancel</string>
+
+    <!-- Checkout Screen -->
+    <string name="checkout">Checkout</string>
+    <string name="ok">OK</string>
+    <string name="order_placed_successfully">Order placed successfully!</string>
+    <string name="continue_shopping">Continue Shopping</string>
+    <string name="your_cart_is_empty">Your cart is empty.</string>
+    <string name="place_order">Place Order</string>
+    <string name="quantity_format">Qty: %d</string>
+
 </resources>
