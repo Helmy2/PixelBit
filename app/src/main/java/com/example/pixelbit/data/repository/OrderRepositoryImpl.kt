@@ -8,6 +8,7 @@ import com.google.firebase.firestore.Query
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import kotlin.coroutines.cancellation.CancellationException
 
 class OrderRepositoryImpl(
     private val firestore: FirebaseFirestore,
@@ -34,6 +35,9 @@ class OrderRepositoryImpl(
 
             emit(Result.success(orders))
         } catch (e: Exception) {
+            if (e is CancellationException) {
+                throw e
+            }
             emit(Result.failure(e))
         }
     }

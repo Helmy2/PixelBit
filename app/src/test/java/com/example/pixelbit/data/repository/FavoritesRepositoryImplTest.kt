@@ -1,19 +1,17 @@
 package com.example.pixelbit.data.repository
 
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.*
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
-@RunWith(AndroidJUnit4::class)
 @ExperimentalCoroutinesApi
 class FavoritesRepositoryImplTest {
 
@@ -33,7 +31,7 @@ class FavoritesRepositoryImplTest {
     }
 
     @Test
-    fun givenNoUser_whenAddToFavorites_thenReturnsError() = runTest {
+    fun `given No User when Add To Favorites then Returns Error`() = runTest {
         // Given
         whenever(firebaseAuth.currentUser).thenReturn(null)
 
@@ -45,7 +43,7 @@ class FavoritesRepositoryImplTest {
     }
 
     @Test
-    fun givenNoUser_whenRemoveFromFavorites_thenReturnsError() = runTest {
+    fun `given No User when Remove From Favorites then Returns Error`() = runTest {
         // Given
         whenever(firebaseAuth.currentUser).thenReturn(null)
 
@@ -57,7 +55,7 @@ class FavoritesRepositoryImplTest {
     }
 
     @Test
-    fun givenNoUser_whenIsFavorite_thenReturnsFalse() = runTest {
+    fun `given No User when Is Favorite then Returns False`() = runTest {
         // Given
         whenever(firebaseAuth.currentUser).thenReturn(null)
 
