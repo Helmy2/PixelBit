@@ -35,6 +35,7 @@ class ForgotPasswordViewModel(
             return
         }
 
+
         if (!android.util.Patterns.EMAIL_ADDRESS.matcher(_email.value).matches()) {
             _errorMessage.value = "Please enter a valid email address"
             return
@@ -47,10 +48,12 @@ class ForgotPasswordViewModel(
                         _isLoading.value = true
                         _errorMessage.value = null
                     }
+
                     is AuthResult.Success -> {
                         _isLoading.value = false
                         _isSuccess.value = true
                     }
+
                     is AuthResult.Error -> {
                         _isLoading.value = false
                         _errorMessage.value = result.message
