@@ -60,6 +60,35 @@ class AddressRepositoryImpl(
         }
     }
 
+    override suspend fun updateAddress(address: Address): Result<Unit> {
+        return try {
+            val userId =
+                auth.currentUser?.uid ?: return Result.failure(Exception("User not logged in"))
+
+            if (address.default) {
+                // Ensure only one default address
+                val batch = firestore.batch()
+                val currentDefault = firestore.collection("users").document(userId)
+                    .collection("addresses").whereEqualTo("default", true).get().await()
+
+                currentDefault.documents.forEach { doc ->
+                    if (doc.id != address.id) {
+                        batch.update(doc.reference, "default", false)
+                    }
+                }
+                batch.commit().await()
+            }
+
+            firestore.collection("users").document(userId)
+                .collection("addresses").document(address.id)
+                .set(address).await()
+
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     override suspend fun deleteAddress(addressId: String): Result<Unit> {
         return try {
             val userId =
