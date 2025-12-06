@@ -17,7 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -38,7 +37,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -134,7 +132,7 @@ fun VerificationScreenContent(
                     modifier = Modifier
                         .size(80.dp)
                         .padding(bottom = 24.dp),
-                    tint = Color(0xFF514EB7)
+                    tint = MaterialTheme.colorScheme.primary
                 )
 
                 Text(
@@ -185,10 +183,6 @@ fun VerificationScreenContent(
                         .fillMaxWidth()
                         .height(50.dp),
                     enabled = isButtonEnabled,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF514EB7),
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    )
                 ) {
                     if (state.isLoading) {
                         CircularProgressIndicator(

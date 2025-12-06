@@ -29,7 +29,9 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: 'gradle'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
@@ -38,7 +40,10 @@ jobs:
         env:
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
         run: |
-          echo "$SIGNING_KEY" | base64 -d > release-keystore.jks
+          echo "$SIGNING_KEY" | base64 -d > ${{ github.workspace }}/release-keystore.jks
+          chmod 644 ${{ github.workspace }}/release-keystore.jks
+          ls -lah ${{ github.workspace }}/release-keystore.jks
+          file ${{ github.workspace }}/release-keystore.jks
 
       - name: Extract version from tag
         id: get_version
@@ -47,31 +52,23 @@ jobs:
           echo "VERSION_NUMBER=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
 
       - name: Build and Sign Release APK
-        env:
-          KEYSTORE_FILE: ${{ github.workspace }}/release-keystore.jks
-          KEYSTORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
           ./gradlew assembleRelease \
-            -Pandroid.injected.signing.store.file=$KEYSTORE_FILE \
-            -Pandroid.injected.signing.store.password=$KEYSTORE_PASSWORD \
-            -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
-            -Pandroid.injected.signing.key.password=$KEY_PASSWORD \
+            --no-daemon \
+            -Pandroid.injected.signing.store.file=${{ github.workspace }}/release-keystore.jks \
+            -Pandroid.injected.signing.store.password="${{ secrets.KEY_STORE_PASSWORD }}" \
+            -Pandroid.injected.signing.key.alias="${{ secrets.KEY_ALIAS }}" \
+            -Pandroid.injected.signing.key.password="${{ secrets.KEY_PASSWORD }}" \
             --stacktrace
 
       - name: Build and Sign Release AAB
-        env:
-          KEYSTORE_FILE: ${{ github.workspace }}/release-keystore.jks
-          KEYSTORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
           ./gradlew bundleRelease \
-            -Pandroid.injected.signing.store.file=$KEYSTORE_FILE \
-            -Pandroid.injected.signing.store.password=$KEYSTORE_PASSWORD \
-            -Pandroid.injected.signing.key.alias=$KEY_ALIAS \
-            -Pandroid.injected.signing.key.password=$KEY_PASSWORD \
+            --no-daemon \
+            -Pandroid.injected.signing.store.file=${{ github.workspace }}/release-keystore.jks \
+            -Pandroid.injected.signing.store.password="${{ secrets.KEY_STORE_PASSWORD }}" \
+            -Pandroid.injected.signing.key.alias="${{ secrets.KEY_ALIAS }}" \
+            -Pandroid.injected.signing.key.password="${{ secrets.KEY_PASSWORD }}" \
             --stacktrace
 
       - name: Rename signed APK
@@ -127,4 +124,4 @@ jobs:
 
       - name: Cleanup Keystore
         if: always()
-        run: rm -f release-keystore.jks
+        run: rm -f ${{ github.workspace }}/release-keystore.jks

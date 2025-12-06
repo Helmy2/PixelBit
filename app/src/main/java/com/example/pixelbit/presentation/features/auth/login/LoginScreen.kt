@@ -12,21 +12,24 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Email
-import androidx.compose.material.icons.outlined.Lock
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuDefaults.textFieldColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -84,6 +87,7 @@ fun LoginScreen(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreenContent(
     email: String,
@@ -103,6 +107,7 @@ fun LoginScreenContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(paddingValues)
                 .padding(24.dp),
         ) {
@@ -133,24 +138,21 @@ fun LoginScreenContent(
                 placeholder = {
                     Text(
                         stringResource(R.string.enter_email_or_phone),
-                        color = Color.Gray
-                    )
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Outlined.Email,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
                     )
                 },
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Color.LightGray.copy(alpha = 0.5f),
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White
+                colors = textFieldColors(
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedContainerColor = Color.Transparent,
                 ),
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Email,
+                        contentDescription = stringResource(R.string.email_icon),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email,
                     imeAction = ImeAction.Next
@@ -169,14 +171,6 @@ fun LoginScreenContent(
                 placeholder = {
                     Text(
                         stringResource(R.string.enter_your_password),
-                        color = Color.Gray
-                    )
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Outlined.Lock,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary
                     )
                 },
                 trailingIcon = {
@@ -193,12 +187,17 @@ fun LoginScreenContent(
                 visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(16.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Color.LightGray.copy(alpha = 0.5f),
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White
+                colors = textFieldColors(
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedContainerColor = Color.Transparent,
                 ),
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Lock,
+                        contentDescription = stringResource(R.string.password_icon),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Password,
                     imeAction = ImeAction.Done
