@@ -8,6 +8,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import kotlin.coroutines.cancellation.CancellationException
 
 class CheckoutRepositoryImpl(
     private val firestore: FirebaseFirestore,
@@ -29,6 +30,9 @@ class CheckoutRepositoryImpl(
 
             emit(Result.success(cartItems))
         } catch (e: Exception) {
+            if (e is CancellationException) {
+                throw e
+            }
             emit(Result.failure(e))
         }
     }

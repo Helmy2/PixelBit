@@ -20,6 +20,8 @@ import com.example.pixelbit.domain.repository.FavoritesRepository
 import com.example.pixelbit.domain.repository.OnboardingRepository
 import com.example.pixelbit.domain.repository.OrderRepository
 import com.example.pixelbit.domain.repository.ShopRepository
+import com.example.pixelbit.domain.util.EmailValidator
+import com.example.pixelbit.domain.util.EmailValidatorImpl
 import com.example.pixelbit.presentation.features.address.AddressViewModel
 import com.example.pixelbit.presentation.features.auth.forgotpassword.ForgotPasswordViewModel
 import com.example.pixelbit.presentation.features.auth.login.LoginViewModel
@@ -36,6 +38,7 @@ import com.example.pixelbit.presentation.navigation.AppNavigator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import org.koin.android.ext.koin.androidContext
+import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
@@ -59,6 +62,8 @@ val appModule = module {
     singleOf(::CheckoutRepositoryImpl).bind<CheckoutRepository>()
     singleOf(::OrderRepositoryImpl).bind<OrderRepository>()
     singleOf(::AddressRepositoryImpl).bind<AddressRepository>()
+
+    factoryOf(::EmailValidatorImpl).bind<EmailValidator>()
 
     viewModelOf(::SignUpViewModel)
     viewModelOf(::VerificationViewModel)

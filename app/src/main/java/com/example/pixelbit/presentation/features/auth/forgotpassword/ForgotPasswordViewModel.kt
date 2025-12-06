@@ -4,12 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pixelbit.domain.model.AuthResult
 import com.example.pixelbit.domain.repository.AuthRepository
+import com.example.pixelbit.domain.util.EmailValidator
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class ForgotPasswordViewModel(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val emailValidator: EmailValidator
 ) : ViewModel() {
 
     private val _email = MutableStateFlow("")
@@ -35,8 +37,7 @@ class ForgotPasswordViewModel(
             return
         }
 
-
-        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(_email.value).matches()) {
+        if (!emailValidator.isValid(_email.value)) {
             _errorMessage.value = "Please enter a valid email address"
             return
         }
@@ -48,12 +49,10 @@ class ForgotPasswordViewModel(
                         _isLoading.value = true
                         _errorMessage.value = null
                     }
-
                     is AuthResult.Success -> {
                         _isLoading.value = false
                         _isSuccess.value = true
                     }
-
                     is AuthResult.Error -> {
                         _isLoading.value = false
                         _errorMessage.value = result.message
