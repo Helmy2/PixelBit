@@ -29,6 +29,7 @@ import com.example.pixelbit.presentation.features.favorites.FavoritesScreen
 import com.example.pixelbit.presentation.features.home.HomeScreen
 import com.example.pixelbit.presentation.features.myorders.MyOrdersScreen
 import com.example.pixelbit.presentation.features.onboarding.OnboardingScreen
+import com.example.pixelbit.presentation.features.products.ProductsScreen
 import com.example.pixelbit.presentation.features.profile.ProfileScreen
 
 @Composable
@@ -143,7 +144,16 @@ fun NavGraph(
                 }
 
                 entry<Screen.Home> {
-                    HomeScreen()
+                    HomeScreen(onCategoryClick = { category ->
+                        navController.add(Screen.Products(category))
+                    })
+                }
+
+                entry<Screen.Products> {
+                    ProductsScreen(
+                        categoryName = it.category,
+                        onBackClick = { navController.back() }
+                    )
                 }
 
                 entry<Screen.Profile> {

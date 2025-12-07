@@ -9,4 +9,5 @@ interface ShopRepository {
     fun getProducts(): Flow<List<Product>>
     suspend fun getCategories(): List<Category>
     suspend fun getBanners(): List<Banner>
+    fun getProductsByCategory(category: String): Flow<List<Product>>
 }

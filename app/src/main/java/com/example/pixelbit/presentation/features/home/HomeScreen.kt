@@ -37,9 +37,6 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,32 +53,26 @@ import com.example.pixelbit.R
 import com.example.pixelbit.domain.model.Banner
 import com.example.pixelbit.domain.model.User
 import com.example.pixelbit.presentation.features.category.CategoryItem
+import com.example.pixelbit.presentation.features.products.ProductItem
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
+fun HomeScreen(viewModel: HomeViewModel = koinViewModel(), onCategoryClick: (String) -> Unit) {
 
-    val user by viewModel.user.collectAsStateWithLifecycle()
-    val products by viewModel.products.collectAsStateWithLifecycle()
-    val categories by viewModel.categories.collectAsStateWithLifecycle()
-    val banners by viewModel.banners.collectAsStateWithLifecycle()
-    val isLoading by viewModel.loading.collectAsStateWithLifecycle()
-    val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
-
-    var selectedTabIndex by remember { mutableStateOf(0) }
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     Scaffold(
-        topBar = { HomeTopBar(user) }, contentWindowInsets = WindowInsets()
+        topBar = { HomeTopBar(state.user) }, contentWindowInsets = WindowInsets()
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
             HomeTabs(
-                selectedIndex = selectedTabIndex,
-                onTabSelected = { index -> selectedTabIndex = index })
+                selectedIndex = state.selectedTabIndex,
+                onTabSelected = { viewModel.onTabSelected(it) })
 
             PullToRefreshBox(
-                isRefreshing = isRefreshing, onRefresh = { viewModel.loadData(true) }) {
-                if (isLoading) {
+                isRefreshing = state.isRefreshing, onRefresh = { viewModel.loadData(true) }) {
+                if (state.isLoading) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator()
                     }
@@ -96,8 +87,8 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                         verticalItemSpacing = 24.dp
                     ) {
-                        if (selectedTabIndex == 0) {
-                            item(span = StaggeredGridItemSpan.FullLine) { HomeBanner(banners) }
+                        if (state.selectedTabIndex == 0) {
+                            item(span = StaggeredGridItemSpan.FullLine) { HomeBanner(state.banners) }
 
                             item(span = StaggeredGridItemSpan.FullLine) {
                                 Row(
@@ -120,19 +111,23 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
                                 }
                             }
 
-                            items(products.take(10)) { product ->
+                            items(state.products.take(10)) { product ->
                                 ProductItem(
                                     product = product,
                                     onFavoriteClick = { viewModel.toggleFavorite(it) },
-                                    onAddToCart = { viewModel.addToCart(it) }
+                                    onAddToCart = { viewModel.addToCart(product) }
                                 )
                             }
 
                         } else {
                             itemsIndexed(
-                                categories,
+                                state.categories,
                                 span = { _, _ -> StaggeredGridItemSpan.FullLine }) { index, category ->
-                                CategoryItem(category = category, index = index)
+                                CategoryItem(
+                                    category = category, 
+                                    index = index, 
+                                    onCategoryClick = onCategoryClick
+                                )
                             }
                         }
                     }

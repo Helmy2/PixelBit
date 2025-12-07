@@ -1,71 +1,46 @@
-package com.example.pixelbit.presentation.features.home
+package com.example.pixelbit.presentation.features.products
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.pixelbit.domain.model.Banner
-import com.example.pixelbit.domain.model.Category
 import com.example.pixelbit.domain.model.Product
-import com.example.pixelbit.domain.model.User
-import com.example.pixelbit.domain.repository.AuthRepository
 import com.example.pixelbit.domain.repository.CartRepository
 import com.example.pixelbit.domain.repository.FavoritesRepository
 import com.example.pixelbit.domain.repository.ShopRepository
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-data class HomeState(
-    val user: User? = null,
+data class ProductsState(
     val products: List<Product> = emptyList(),
-    val categories: List<Category> = emptyList(),
-    val banners: List<Banner> = emptyList(),
     val isLoading: Boolean = false,
-    val isRefreshing: Boolean = false,
-    val selectedTabIndex: Int = 0
 )
 
-class HomeViewModel(
+class ProductsViewModel(
     private val shopRepository: ShopRepository,
-    private val authRepository: AuthRepository,
     private val favoritesRepository: FavoritesRepository,
     private val cartRepository: CartRepository
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(HomeState())
+    private val _state = MutableStateFlow(ProductsState())
     val state = _state.asStateFlow()
 
-    init {
-        loadData()
-    }
+    private var productsJob: Job? = null
 
-    fun loadData(isRefresh: Boolean = false) {
-        viewModelScope.launch {
-            _state.value = _state.value.copy(isRefreshing = isRefresh, isLoading = !isRefresh)
-            try {
-                launch {
-                    shopRepository.getProducts().collect {
-                        _state.value = _state.value.copy(products = it)
-                    }
-                }
-
-                val user = authRepository.getCurrentUser()
-                val categoriesResult = shopRepository.getCategories()
-                val bannersResult = shopRepository.getBanners()
-                _state.value = _state.value.copy(
-                    categories = categoriesResult,
-                    banners = bannersResult,
-                    user = user
-                )
-            } catch (e: Exception) {
-                e.printStackTrace()
-            } finally {
-                _state.value = _state.value.copy(isRefreshing = false, isLoading = false)
+    fun getProductsByCategory(category: String) {
+        _state.value = _state.value.copy(isLoading = true)
+        productsJob = shopRepository.getProductsByCategory(category)
+            .onEach { products ->
+                _state.value = _state.value.copy(products = products, isLoading = false)
             }
-        }
-    }
-
-    fun onTabSelected(index: Int) {
-        _state.value = _state.value.copy(selectedTabIndex = index)
+            .catch { e ->
+                e.printStackTrace()
+                _state.value = _state.value.copy(isLoading = false)
+            }
+            .launchIn(viewModelScope)
     }
 
     fun toggleFavorite(productId: String) {

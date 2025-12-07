@@ -1,5 +1,6 @@
 package com.example.pixelbit.presentation.features.category
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,6 +30,7 @@ import com.example.pixelbit.domain.model.Category
 fun CategoryItem(
     category: Category,
     index: Int,
+    onCategoryClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val isTextOnLeft = index % 2 == 0
@@ -37,6 +39,7 @@ fun CategoryItem(
         modifier = modifier
             .fillMaxWidth()
             .height(140.dp)
+            .clickable { onCategoryClick(category.title) }
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),
@@ -94,11 +97,11 @@ fun CategoryImage(category: Category, modifier: Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun CategoryItemPreview() {
-    CategoryItem(category = Category("1", "T-Shirts", 120, ""), index = 0)
+    CategoryItem(category = Category("1", "T-Shirts", 120, ""), index = 0, onCategoryClick = {})
 }
 
 @Preview(showBackground = true)
 @Composable
 fun CategoryItemPreviewRight() {
-    CategoryItem(category = Category("1", "T-Shirts", 120, ""), index = 1)
+    CategoryItem(category = Category("1", "T-Shirts", 120, ""), index = 1, onCategoryClick = {})
 }
