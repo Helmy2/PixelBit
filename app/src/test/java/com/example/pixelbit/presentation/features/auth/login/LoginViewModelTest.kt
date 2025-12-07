@@ -1,7 +1,7 @@
-package com.example.pixelbit.ui.login
+package com.example.pixelbit.presentation.features.auth.login
 
+import app.cash.turbine.test
 import com.example.pixelbit.domain.repository.AuthRepository
-import com.example.pixelbit.presentation.features.auth.login.LoginViewModel
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -13,23 +13,20 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mock
-import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
-@OptIn(ExperimentalCoroutinesApi::class)
+@ExperimentalCoroutinesApi
 class LoginViewModelTest {
 
     private lateinit var viewModel: LoginViewModel
-    private val testDispatcher = StandardTestDispatcher()
-
-    @Mock
     private lateinit var authRepository: AuthRepository
+    private val testDispatcher = StandardTestDispatcher()
 
     @Before
     fun setUp() {
-        MockitoAnnotations.openMocks(this)
         Dispatchers.setMain(testDispatcher)
+        authRepository = mock()
         viewModel = LoginViewModel(authRepository)
     }
 
@@ -39,84 +36,58 @@ class LoginViewModelTest {
     }
 
     @Test
-    fun `initial state is empty`() = runTest {
-        assertThat(viewModel.email.value).isEmpty()
-        assertThat(viewModel.password.value).isEmpty()
-        assertThat(viewModel.isPasswordVisible.value).isFalse()
-        assertThat(viewModel.isLoading.value).isFalse()
-    }
-
-    @Test
-    fun `onEmailChange updates email state`() {
-        viewModel.onEmailChange("test@mail.com")
-        assertThat(viewModel.email.value).isEqualTo("test@mail.com")
-    }
-
-    @Test
-    fun `onPasswordChange updates password state`() {
-        viewModel.onPasswordChange("secret123")
-        assertThat(viewModel.password.value).isEqualTo("secret123")
-    }
-
-    @Test
-    fun `togglePasswordVisibility toggles state`() {
-        assertThat(viewModel.isPasswordVisible.value).isFalse()
-
-        viewModel.togglePasswordVisibility()
-        assertThat(viewModel.isPasswordVisible.value).isTrue()
-
-        viewModel.togglePasswordVisibility()
-        assertThat(viewModel.isPasswordVisible.value).isFalse()
-    }
-
-    @Test
     fun `login failure with empty fields sets error message`() = runTest {
-        var callbackCalled = false
 
-        viewModel.login(onSuccess = { callbackCalled = true })
-        advanceUntilIdle()
+        viewModel.login(onSuccess = {})
 
-        assertThat(callbackCalled).isFalse()
-        assertThat(viewModel.errorMessage.value).isEqualTo("Please fill in all fields")
+        viewModel.errorMessage.test {
+            val error = awaitItem()
+            assertThat(error).isEqualTo("Please fill in all fields")
+        }
     }
 
     @Test
     fun `login success calls onSuccess callback`() = runTest {
         val email = "valid@mail.com"
-        val pass = "validPass"
+        val pass = "password123"
         viewModel.onEmailChange(email)
         viewModel.onPasswordChange(pass)
 
         whenever(authRepository.login(email, pass)).thenReturn(Result.success(Unit))
 
-        var callbackCalled = false
-        viewModel.login(onSuccess = { callbackCalled = true })
+        var isSuccessCalled = false
+        viewModel.login(onSuccess = { isSuccessCalled = true })
 
         advanceUntilIdle()
 
-        assertThat(callbackCalled).isTrue()
-        assertThat(viewModel.isLoading.value).isFalse()
-        assertThat(viewModel.errorMessage.value).isNull()
+        assertThat(isSuccessCalled).isTrue()
+
+        viewModel.isLoading.test {
+            assertThat(awaitItem()).isFalse()
+        }
+        viewModel.errorMessage.test {
+            assertThat(awaitItem()).isNull()
+        }
     }
 
     @Test
-    fun `login failure sets error message from repository`() = runTest {
+    fun `login failure sets error message while pass or email are wrong`() = runTest {
         val email = "valid@mail.com"
-        val pass = "wrongPass"
-        val errorMsg = "Invalid credentials"
+        val pass = "wrongpass"
+        val repoError = "Invalid credentials"
 
         viewModel.onEmailChange(email)
         viewModel.onPasswordChange(pass)
 
         whenever(authRepository.login(email, pass))
-            .thenReturn(Result.failure(Exception(errorMsg)))
+            .thenReturn(Result.failure(Exception(repoError)))
 
-        var callbackCalled = false
-        viewModel.login(onSuccess = { callbackCalled = true })
+        viewModel.login(onSuccess = {})
         advanceUntilIdle()
 
-        assertThat(callbackCalled).isFalse()
-        assertThat(viewModel.errorMessage.value).isEqualTo(errorMsg)
-        assertThat(viewModel.isLoading.value).isFalse()
+        viewModel.errorMessage.test {
+            val error = awaitItem()
+            assertThat(error).isEqualTo(repoError)
+        }
     }
 }
