@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -44,6 +45,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -151,8 +153,7 @@ private fun FavoriteProductCard(
 ) {
     Card(
         modifier = modifier
-            .fillMaxWidth()
-            .height(280.dp),
+            .fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant
@@ -163,20 +164,19 @@ private fun FavoriteProductCard(
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
-
-            ) {
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(180.dp),
+                    .height(160.dp)
+                    .clip(RoundedCornerShape(16.dp))
 
-                ) {
+            ) {
                 AsyncImage(
                     model = product.images,
                     contentDescription = product.title,
                     modifier = Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
+                        .fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
 
@@ -184,69 +184,56 @@ private fun FavoriteProductCard(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .padding(8.dp)
-                        .size(32.dp)
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.9f))
                 ) {
                     IconButton(
                         onClick = onRemoveFromFavorites,
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .background(Color.Black.copy(alpha = 0.2f))
+                            .size(32.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Favorite,
                             contentDescription = stringResource(id = R.string.remove_from_favorites),
                             tint = Color.Red,
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(16.dp)
                         )
                     }
                 }
             }
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = product.title,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(horizontal = 4.dp),
+                color = MaterialTheme.colorScheme.onSurface, maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
 
-            Column(
+            Spacer(modifier = Modifier.height(4.dp))
 
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.surfaceContainer)
-                    .fillMaxSize()
-                    .padding(12.dp),
-                verticalArrangement = Arrangement.SpaceBetween
-            ) {
-                Column {
-                    Text(
-                        text = product.title,
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 14.sp
-                        ),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
+            Text(
+                text = product.category,
+                style = MaterialTheme.typography.bodySmall.copy(
+                    fontSize = 12.sp
+                ),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
 
-                    Spacer(modifier = Modifier.height(4.dp))
-
-                    Text(
-                        text = product.category,
-                        style = MaterialTheme.typography.bodySmall.copy(
-                            fontSize = 12.sp
-                        ),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-
-                Text(
-                    text = stringResource(
-                        id = R.string.price_format,
-                        product.price.toFloatOrNull() ?: 0f
-                    ),
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
-                    ),
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
+            Text(
+                text = stringResource(
+                    id = R.string.price_format,
+                    product.price.toFloatOrNull() ?: 0f
+                ),
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp
+                ),
+                color = MaterialTheme.colorScheme.onSurface
+            )
+            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }
