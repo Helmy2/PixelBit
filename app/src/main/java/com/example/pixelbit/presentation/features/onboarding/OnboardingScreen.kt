@@ -58,7 +58,7 @@ fun OnboardingScreen(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun OnboardingContent(
+fun OnboardingContent(
     uiState: OnboardingUiState,
     onEvent: (OnboardingEvent) -> Unit,
     onNavigateToSignUp: () -> Unit,
