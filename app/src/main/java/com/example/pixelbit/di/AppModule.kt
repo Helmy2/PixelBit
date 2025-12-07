@@ -28,6 +28,7 @@ import com.example.pixelbit.presentation.features.auth.login.LoginViewModel
 import com.example.pixelbit.presentation.features.auth.signup.SignUpViewModel
 import com.example.pixelbit.presentation.features.auth.verification.VerificationViewModel
 import com.example.pixelbit.presentation.features.cart.CartViewModel
+import com.example.pixelbit.presentation.features.category.CategoryDetailsViewModel
 import com.example.pixelbit.presentation.features.checkout.CheckoutViewModel
 import com.example.pixelbit.presentation.features.favorites.FavoritesViewModel
 import com.example.pixelbit.presentation.features.home.HomeViewModel
@@ -77,4 +78,5 @@ val appModule = module {
     viewModelOf(::CheckoutViewModel)
     viewModelOf(::MyOrdersViewModel)
     viewModelOf(::AddressViewModel)
+    viewModelOf(::CategoryDetailsViewModel)
 }

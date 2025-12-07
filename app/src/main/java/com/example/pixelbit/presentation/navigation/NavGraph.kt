@@ -24,6 +24,7 @@ import com.example.pixelbit.presentation.features.auth.login.LoginScreen
 import com.example.pixelbit.presentation.features.auth.signup.SignUpScreen
 import com.example.pixelbit.presentation.features.auth.verification.VerificationScreen
 import com.example.pixelbit.presentation.features.cart.CartScreen
+import com.example.pixelbit.presentation.features.category.CategoryDetailsScreen
 import com.example.pixelbit.presentation.features.checkout.CheckoutScreen
 import com.example.pixelbit.presentation.features.favorites.FavoritesScreen
 import com.example.pixelbit.presentation.features.home.HomeScreen
@@ -144,6 +145,12 @@ fun NavGraph(
 
                 entry<Screen.Home> {
                     HomeScreen()
+                }
+
+                entry<Screen.CategoryDetails> {
+                    CategoryDetailsScreen(
+                        categoryName = it.id,
+                    )
                 }
 
                 entry<Screen.Profile> {

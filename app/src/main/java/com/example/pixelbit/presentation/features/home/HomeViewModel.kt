@@ -10,6 +10,8 @@ import com.example.pixelbit.domain.repository.AuthRepository
 import com.example.pixelbit.domain.repository.CartRepository
 import com.example.pixelbit.domain.repository.FavoritesRepository
 import com.example.pixelbit.domain.repository.ShopRepository
+import com.example.pixelbit.presentation.navigation.AppNavigator
+import com.example.pixelbit.presentation.navigation.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -18,7 +20,8 @@ class HomeViewModel(
     private val shopRepository: ShopRepository,
     private val authRepository: AuthRepository,
     private val favoritesRepository: FavoritesRepository,
-    private val cartRepository: CartRepository
+    private val cartRepository: CartRepository,
+    private val navController: AppNavigator
 ) : ViewModel() {
 
     private val _user = MutableStateFlow<User?>(null)
@@ -38,6 +41,9 @@ class HomeViewModel(
 
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing.asStateFlow()
+
+    private val _selectedTabIndex = MutableStateFlow(0)
+    val selectedTabIndex = _selectedTabIndex.asStateFlow()
 
     init {
         loadData()
@@ -73,6 +79,14 @@ class HomeViewModel(
                 }
             }
         }
+    }
+
+    fun onCategoryClick(id: String) {
+        navController.add(Screen.CategoryDetails(id))
+    }
+
+    fun onSelectTab(index: Int) {
+        _selectedTabIndex.value = index
     }
 
     fun toggleFavorite(productId: String) {
