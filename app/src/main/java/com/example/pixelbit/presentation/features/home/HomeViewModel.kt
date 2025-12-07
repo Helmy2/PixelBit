@@ -9,6 +9,8 @@ import com.example.pixelbit.domain.model.User
 import com.example.pixelbit.domain.repository.AuthRepository
 import com.example.pixelbit.domain.repository.FavoritesRepository
 import com.example.pixelbit.domain.repository.ShopRepository
+import com.example.pixelbit.presentation.navigation.AppNavigator
+import com.example.pixelbit.presentation.navigation.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -16,7 +18,8 @@ import kotlinx.coroutines.launch
 class HomeViewModel(
     private val shopRepository: ShopRepository,
     private val authRepository: AuthRepository,
-    private val favoritesRepository: FavoritesRepository
+    private val favoritesRepository: FavoritesRepository,
+    private val navController: AppNavigator
 ) : ViewModel() {
 
     private val _user = MutableStateFlow<User?>(null)
@@ -31,11 +34,14 @@ class HomeViewModel(
     private val _banners = MutableStateFlow<List<Banner>>(emptyList())
     val banners = _banners.asStateFlow()
 
-    private val _loading = MutableStateFlow(true)
+    private val _loading = MutableStateFlow(false)
     val loading = _loading.asStateFlow()
 
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing.asStateFlow()
+
+    private val _selectedTabIndex = MutableStateFlow(0)
+    val selectedTabIndex = _selectedTabIndex.asStateFlow()
 
     init {
         loadData()
@@ -50,11 +56,18 @@ class HomeViewModel(
             }
             try {
                 launch {
-                    shopRepository.getProducts().collect {
-                        _products.value = it
+                    shopRepository.getProducts().collect { products ->
+                        val updatedProducts = products.map { product ->
+                            val isFavorite = try {
+                                favoritesRepository.isFavorite(product.id)
+                            } catch (e: Exception) {
+                                false
+                            }
+                            product.copy(isFavorite = isFavorite)
+                        }
+                        _products.value = updatedProducts
                     }
                 }
-
                 val user = authRepository.getCurrentUser()
                 val categoriesResult = shopRepository.getCategories()
                 val bannersResult = shopRepository.getBanners()
@@ -73,8 +86,18 @@ class HomeViewModel(
         }
     }
 
+    fun onCategoryClick(id: String) {
+        navController.add(Screen.CategoryDetails(id))
+    }
+
+    fun onSelectTab(index: Int) {
+        _selectedTabIndex.value = index
+    }
+
     fun toggleFavorite(productId: String) {
         viewModelScope.launch {
+            val userId = _user.value?.uid ?: return@launch // Return if user is not logged in
+
             var wasFavorite = true
             val currentProducts = _products.value.map {
                 if (it.id == productId) {
@@ -89,9 +112,9 @@ class HomeViewModel(
             try {
                 val product = currentProducts.first { it.id == productId }
                 if (wasFavorite) {
-                    favoritesRepository.removeFromFavorites(product.id)
+                    favoritesRepository.removeFromFavorites(productId)
                 } else {
-                    favoritesRepository.addToFavorites(product.id)
+                    favoritesRepository.addToFavorites(productId)
                 }
             } catch (e: Exception) {
                 _products.value = _products.value.map {
@@ -104,5 +127,9 @@ class HomeViewModel(
                 e.printStackTrace()
             }
         }
+    }
+
+    fun onProfileClicked() {
+        navController.addTopLevel(Screen.Profile)
     }
 }

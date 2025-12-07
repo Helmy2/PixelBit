@@ -17,11 +17,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -30,15 +30,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -55,12 +53,12 @@ import com.example.pixelbit.R
 import com.example.pixelbit.domain.model.Banner
 import com.example.pixelbit.domain.model.User
 import com.example.pixelbit.presentation.features.category.CategoryItem
-import com.example.pixelbit.presentation.theme.Purple40
+import com.example.pixelbit.presentation.features.products.ProductItem
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
+fun HomeScreen(viewModel: HomeViewModel = koinViewModel(),onProductClick: (String) -> Unit) {
 
     val user by viewModel.user.collectAsStateWithLifecycle()
     val products by viewModel.products.collectAsStateWithLifecycle()
@@ -68,16 +66,17 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
     val banners by viewModel.banners.collectAsStateWithLifecycle()
     val isLoading by viewModel.loading.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
-
-    var selectedTabIndex by remember { mutableStateOf(0) }
+    val selectedTabIndex by viewModel.selectedTabIndex.collectAsStateWithLifecycle()
 
     Scaffold(
-        topBar = { HomeTopBar(user) }, contentWindowInsets = WindowInsets()
+        topBar = { HomeTopBar(user, viewModel::onProfileClicked) },
+        contentWindowInsets = WindowInsets()
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
             HomeTabs(
                 selectedIndex = selectedTabIndex,
-                onTabSelected = { index -> selectedTabIndex = index })
+                onTabSelected = viewModel::onSelectTab
+            )
 
             PullToRefreshBox(
                 isRefreshing = isRefreshing, onRefresh = { viewModel.loadData(true) }) {
@@ -86,20 +85,20 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
                         CircularProgressIndicator()
                     }
                 } else {
-                    LazyVerticalGrid(
+                    LazyVerticalStaggeredGrid(
                         modifier = Modifier.fillMaxSize(),
-                        columns = GridCells.Adaptive(320.dp),
+                        columns = StaggeredGridCells.Adaptive(150.dp),
                         contentPadding = PaddingValues(
                             start = 16.dp,
                             end = 16.dp,
                         ),
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(24.dp)
+                        verticalItemSpacing = 24.dp
                     ) {
                         if (selectedTabIndex == 0) {
-                            item(span = { GridItemSpan(maxLineSpan) }) { HomeBanner(banners) }
+                            item(span = StaggeredGridItemSpan.FullLine) { HomeBanner(banners) }
 
-                            item(span = { GridItemSpan(maxLineSpan) }) {
+                            item(span = StaggeredGridItemSpan.FullLine) {
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -114,7 +113,7 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
                                     )
                                     Text(
                                         "See All",
-                                        color = Purple40,
+                                        color = MaterialTheme.colorScheme.primary,
                                         fontWeight = FontWeight.SemiBold
                                     )
                                 }
@@ -123,14 +122,20 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
                             items(products.take(10)) { product ->
                                 ProductItem(
                                     product = product,
-                                    onFavoriteClick = { viewModel.toggleFavorite(it) })
+                                    onFavoriteClick = { viewModel.toggleFavorite(it) },
+                                    onClick = { onProductClick(product.id) }
+                                )
                             }
 
                         } else {
                             itemsIndexed(
                                 categories,
-                                span = { _, _ -> GridItemSpan(maxLineSpan) }) { index, category ->
-                                CategoryItem(category = category, index = index)
+                                span = { _, _ -> StaggeredGridItemSpan.FullLine }) { index, category ->
+                                CategoryItem(
+                                    category = category, 
+                                    index = index,
+                                    onCategoryClick = viewModel::onCategoryClick
+                                )
                             }
                         }
                     }
@@ -158,7 +163,9 @@ fun HomeTabs(selectedIndex: Int, onTabSelected: (Int) -> Unit) {
                 "Home",
                 fontWeight = if (selectedIndex == 0) FontWeight.Bold else FontWeight.Normal,
                 fontSize = 16.sp,
-                color = if (selectedIndex == 0) Color.DarkGray else Color.Gray
+                color = if (selectedIndex == 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(
+                    alpha = .5f
+                )
             )
             Spacer(modifier = Modifier.height(8.dp))
             if (selectedIndex == 0) {
@@ -166,7 +173,7 @@ fun HomeTabs(selectedIndex: Int, onTabSelected: (Int) -> Unit) {
                     modifier = Modifier
                         .width(100.dp)
                         .height(2.dp)
-                        .background(Purple40)
+                        .background(MaterialTheme.colorScheme.primary)
                 )
             } else {
                 Spacer(modifier = Modifier.height(2.dp))
@@ -192,7 +199,7 @@ fun HomeTabs(selectedIndex: Int, onTabSelected: (Int) -> Unit) {
                     modifier = Modifier
                         .width(100.dp)
                         .height(2.dp)
-                        .background(Purple40)
+                        .background(MaterialTheme.colorScheme.primary)
                 )
             } else {
                 Spacer(modifier = Modifier.height(2.dp))
@@ -203,14 +210,16 @@ fun HomeTabs(selectedIndex: Int, onTabSelected: (Int) -> Unit) {
 
 @Composable
 fun HomeTopBar(
-    user: User?
+    user: User?,
+    onProfileClicked: () -> Unit
 ) {
     val context = LocalContext.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .statusBarsPadding(),
+            .statusBarsPadding()
+            .clickable(onClick = onProfileClicked),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {

@@ -52,7 +52,7 @@ class LoginViewModel(private val authRepository: AuthRepository) : ViewModel() {
                 
                 onSuccess()
             }.onFailure { error ->
-                _errorMessage.value = "Wrong e-mail or password"
+                _errorMessage.value = error.message ?: error.localizedMessage ?: "Wrong e-mail or password"
             }
         }
     }

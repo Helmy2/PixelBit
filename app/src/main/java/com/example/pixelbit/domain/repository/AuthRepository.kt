@@ -28,5 +28,9 @@ interface AuthRepository {
 
     suspend fun login(email: String, pass: String): Result<Unit>
     fun getProfileFlow(): Flow<Result<User>>
-}
 
+    fun sendPasswordResetEmail(email: String): Flow<AuthResult<Unit>>
+    
+    suspend fun isEmailRegistered(email: String): Boolean
+    fun getCurrentUserId(): String?
+}

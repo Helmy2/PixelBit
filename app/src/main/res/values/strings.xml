@@ -41,6 +41,7 @@
     <string name="password_icon">Password</string>
     <string name="confirm_password_icon">Confirm Password</string>
     <string name="email_verification_icon">Email Verification</string>
+    <string name="back_arrow">Back arrow</string>
 
     <!-- Validation Messages -->
     <string name="enter_full_name_at_least_2_chars">Please enter your full name (at least 2 characters)</string>
@@ -65,7 +66,7 @@
     <string name="failed_to_sign_in">Failed to sign in</string>
     <string name="failed_to_delete_user">Failed to delete user</string>
     <string name="email_not_verified_yet">Email not verified yet. Please check your inbox.</string>
-    <!-- ... existing strings ... -->
+    <string name="an_error_occurred">An error occurred</string>
 
     <!-- Login Screen -->
     <string name="login_account">Login Account</string>
@@ -75,6 +76,14 @@
     <string name="enter_email_or_phone">Enter your email or phone</string>
     <string name="dont_have_account">don\'t have account</string>
 
+    <!-- Forgot Password Screen -->
+    <string name="forgot_password_title">Forgot Password</string>
+    <string name="forgot_password_subtitle">Enter your email to reset your password</string>
+    <string name="send_reset_link">Send Reset Link</string>
+    <string name="check_your_email">Check your email</string>
+    <string name="reset_password_email_sent">We have sent a password reset link to your email.</string>
+    <string name="back_to_login">Back to Login</string>
+
     <!-- Favorites Screen -->
     <string name="my_favorites">My Favorites</string>
     <string name="no_favorites_yet">No Favorites Yet</string>
@@ -82,9 +91,66 @@
     <string name="remove_from_favorites">Remove from favorites</string>
     <string name="add_to_favorites">Add to favorites</string>
     <string name="no_favorites_description">No favorites</string>
-    <string name="price_format">$%s</string>
+    <string name="price_format">$%.2f</string>
 
     <!-- Profile Screen -->
     <string name="my_profile">My Profile</string>
     <string name="logout">Logout</string>
+    <string name="email_label">Email</string>
+    <string name="phone_label">Phone</string>
+    <string name="email_verification_label">Email Verification</string>
+    <string name="not_provided">Not provided</string>
+    <string name="verified">Verified</string>
+    <string name="not_verified">Not Verified</string>
+
+    <!-- Cart Screen -->
+    <string name="my_cart">My Cart</string>
+    <string name="cart_empty">Your Cart is Empty</string>
+    <string name="cart_empty_message">Add products to your cart to see them here</string>
+    <string name="clear_all">Clear All</string>
+    <string name="clear_cart_title">Clear Cart</string>
+    <string name="clear_cart_message">Are you sure you want to remove all items from your cart?</string>
+    <string name="order_summary">Order Summary</string>
+    <string name="subtotal">Subtotal</string>
+    <string name="tax">Tax (10%)</string>
+    <string name="shipping">Shipping</string>
+    <string name="total">Total</string>
+    <string name="proceed_to_checkout">Proceed to Checkout</string>
+    <string name="add_to_cart">Add to Cart</string>
+    <string name="quantity">Quantity</string>
+    <string name="remove">Remove</string>
+    <string name="decrease_quantity">Decrease quantity</string>
+    <string name="increase_quantity">Increase quantity</string>
+    <string name="empty_cart">Empty cart</string>
+    <string name="cancel">Cancel</string>
+
+    <!-- Checkout Screen -->
+    <string name="checkout">Checkout</string>
+    <string name="ok">OK</string>
+    <string name="order_placed_successfully">Order placed successfully!</string>
+    <string name="continue_shopping">Continue Shopping</string>
+    <string name="your_cart_is_empty">Your cart is empty.</string>
+    <string name="place_order">Place Order</string>
+    <string name="quantity_format">Qty: %d</string>
+    <string name="cash_on_delivery">Cash on Delivery</string>
+
+    <!-- My Orders Screen -->
+    <string name="my_orders">My Orders</string>
+    <string name="no_orders_yet">You have no orders yet.</string>
+    <string name="shipping_address">Shipping Address</string>
+    <string name="order_number">Order #%s</string>
+    <string name="placed_on">Placed on: %s</string>
+    <string name="total_price">Total: %s</string>
+
+    <!-- Address Screen -->
+    <string name="manage_address">Manage Address</string>
+    <string name="add_address">Add Address</string>
+    <string name="edit_address">Edit Address</string>
+    <string name="delete_address">Delete Address</string>
+    <string name="no_addresses_found">No addresses found. Please add a new one.</string>
+    <string name="default_address">Default</string>
+    <string name="set_as_default">Set as Default</string>
+    <string name="street">Street</string>
+    <string name="city">City</string>
+    <string name="save">Save</string>
 </resources>

@@ -122,7 +122,7 @@ private fun FavoritesContent(
 
             else -> {
                 LazyVerticalGrid(
-                    columns = GridCells.Adaptive(320.dp),
+                    columns = GridCells.Adaptive(150.dp),
                     contentPadding = PaddingValues(16.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -236,7 +236,10 @@ private fun FavoriteProductCard(
                 }
 
                 Text(
-                    text = stringResource(id = R.string.price_format, product.price),
+                    text = stringResource(
+                        id = R.string.price_format,
+                        product.price.toFloatOrNull() ?: 0f
+                    ),
                     style = MaterialTheme.typography.titleMedium.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 16.sp

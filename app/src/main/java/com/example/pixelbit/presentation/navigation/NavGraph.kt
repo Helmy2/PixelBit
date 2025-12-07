@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
@@ -14,14 +15,23 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScope
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import com.example.pixelbit.presentation.features.address.AddressScreen
+import com.example.pixelbit.presentation.features.auth.forgotpassword.ForgotPasswordScreen
 import com.example.pixelbit.presentation.features.auth.login.LoginScreen
 import com.example.pixelbit.presentation.features.auth.signup.SignUpScreen
 import com.example.pixelbit.presentation.features.auth.verification.VerificationScreen
+import com.example.pixelbit.presentation.features.cart.CartScreen
+import com.example.pixelbit.presentation.features.category.CategoryDetailsScreen
+import com.example.pixelbit.presentation.features.checkout.CheckoutScreen
 import com.example.pixelbit.presentation.features.favorites.FavoritesScreen
 import com.example.pixelbit.presentation.features.home.HomeScreen
+import com.example.pixelbit.presentation.features.myorders.MyOrdersScreen
 import com.example.pixelbit.presentation.features.onboarding.OnboardingScreen
+import com.example.pixelbit.presentation.features.product.detail.ProductDetailScreen
 import com.example.pixelbit.presentation.features.profile.ProfileScreen
 
 @Composable
@@ -30,10 +40,14 @@ fun NavGraph(
 ) {
     val windowAdaptiveInfo = currentWindowAdaptiveInfo()
 
-    val navigationSuiteType = remember(windowAdaptiveInfo, navController.shouldShowAppBar()) {
+    val isTopLevelTransition = remember(navController.shouldShowAppBar()) {
+        navController.shouldShowAppBar()
+    }
+
+    val navigationSuiteType = remember(windowAdaptiveInfo, isTopLevelTransition) {
         val calculateFromAdaptiveInfo =
             NavigationSuiteScaffoldDefaults.calculateFromAdaptiveInfo(windowAdaptiveInfo)
-        if (navController.shouldShowAppBar()) {
+        if (isTopLevelTransition) {
             calculateFromAdaptiveInfo
         } else {
             NavigationSuiteType.None
@@ -48,10 +62,7 @@ fun NavGraph(
     ) {
         NavDisplay(
             backStack = navController.backStack,
-            onBack = { navController.back() },
             transitionSpec = {
-                val isTopLevelTransition = navController.shouldShowAppBar()
-
                 if (isTopLevelTransition) {
                     fadeIn(animationSpec = tween(300)) togetherWith
                             fadeOut(animationSpec = tween(300))
@@ -61,13 +72,23 @@ fun NavGraph(
                 }
             },
             popTransitionSpec = {
-                slideInHorizontally(initialOffsetX = { -it }) togetherWith
-                        slideOutHorizontally(targetOffsetX = { it })
+                if (isTopLevelTransition) {
+                    fadeIn(animationSpec = tween(300)) togetherWith
+                            fadeOut(animationSpec = tween(300))
+                } else {
+                    slideInHorizontally(initialOffsetX = { it }) togetherWith
+                            slideOutHorizontally(targetOffsetX = { -it })
+                }
             },
             predictivePopTransitionSpec = {
                 slideInHorizontally(initialOffsetX = { -it }) togetherWith
                         slideOutHorizontally(targetOffsetX = { it })
             },
+            entryDecorators =
+                listOf(
+                    rememberSaveableStateHolderNavEntryDecorator(),
+                    rememberViewModelStoreNavEntryDecorator(),
+                ),
             entryProvider = entryProvider {
                 entry<Screen.Onboarding> {
                     OnboardingScreen(
@@ -107,26 +128,74 @@ fun NavGraph(
                         onLoginSuccess = {
                             navController.addAsStart(Screen.Home)
                         },
-                        onForgotPassword = { },
+                        onForgotPassword = {
+                            navController.add(Screen.ForgotPassword)
+                        },
                         onSignUpClick = {
                             navController.add(Screen.SignUp)
                         },
                     )
                 }
 
+                entry<Screen.ForgotPassword> {
+                    ForgotPasswordScreen(
+                        onNavigateBack = {
+                            navController.back()
+                        }
+                    )
+                }
+
+                entry<Screen.ProductDetails> { screen ->
+                    ProductDetailScreen(
+                        productId = screen.productId,
+                        onBackClick = {
+                            // Remove this screen from the back stack
+                            navController.back()
+                        },
+                        onCartClick = {
+                            // Navigate to Cart
+                            navController.add(Screen.Cart)
+                        },
+
+                    )
+                }
+
                 entry<Screen.Home> {
-                    HomeScreen()
+                    HomeScreen(
+                        onProductClick = { productId ->
+                            navController.add(Screen.ProductDetails(productId))
+                        }
+                    )
+                }
+
+                entry<Screen.CategoryDetails> {
+                    CategoryDetailsScreen(
+                        categoryName = it.id,
+                    )
                 }
 
                 entry<Screen.Profile> {
                     ProfileScreen()
                 }
 
+                entry<Screen.Cart> {
+                    CartScreen()
+                }
+
+                entry<Screen.Checkout> {
+                    CheckoutScreen()
+                }
+
                 entry<Screen.MyOrders> {
+                    MyOrdersScreen()
                 }
 
                 entry<Screen.Favorites> {
                     FavoritesScreen()
+                }
+
+                entry<Screen.Address> {
+                    AddressScreen()
                 }
             }
         )

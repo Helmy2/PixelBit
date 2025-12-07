@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.ui.graphics.vector.ImageVector
 import kotlinx.serialization.Serializable
 
+@Serializable
 sealed class Screen {
     @Serializable
     data object SignUp : Screen()
@@ -19,7 +20,13 @@ sealed class Screen {
     data object SignIn : Screen()
 
     @Serializable
+    data object ForgotPassword : Screen()
+
+    @Serializable
     data object Home : Screen()
+
+    @Serializable
+    data class ProductDetails(val productId: String) : Screen()
 
     @Serializable
     data object Onboarding : Screen()
@@ -32,6 +39,18 @@ sealed class Screen {
 
     @Serializable
     data object Favorites : Screen()
+
+    @Serializable
+    data object Cart : Screen()
+
+    @Serializable
+    data object Checkout : Screen()
+
+    @Serializable
+    data object Address : Screen()
+
+    @Serializable
+    data class CategoryDetails(val id: String) : Screen()
 }
 
 data class TopLevelDestination(
@@ -46,7 +65,7 @@ val TOP_LEVEL_ROUTES: List<TopLevelDestination> =
             Icons.Default.Home,
         ),
         TopLevelDestination(
-            Screen.MyOrders,
+            Screen.Cart,
             Icons.Default.ShoppingCart,
         ),
         TopLevelDestination(

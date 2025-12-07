@@ -105,4 +105,60 @@ class ShopRepositoryImpl(
             emptyList()
         }
     }
+
+    override fun getProductsByCategory(category: String): Flow<List<Product>> {
+        val userId = firebaseAuth.currentUser?.uid
+
+        val favoritesFlow: Flow<List<String>> = if (userId == null) {
+            flowOf(emptyList())
+        } else {
+            callbackFlow {
+                val listenerRegistration = firestore.collection("users").document(userId)
+                    .addSnapshotListener { snapshot, error ->
+                        if (error != null) {
+                            cancel(message = "Error fetching favorites", cause = error)
+                            return@addSnapshotListener
+                        }
+                        val favoriteIds = snapshot?.get("favorites") as? List<String> ?: emptyList()
+                        trySend(favoriteIds)
+                    }
+                awaitClose { listenerRegistration.remove() }
+            }
+        }
+
+        val productsFlow: Flow<List<Product>> = callbackFlow {
+            val listenerRegistration = firestore.collection("products")
+                .whereEqualTo("category", category)
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        cancel(message = "Error fetching products", cause = error)
+                        return@addSnapshotListener
+                    }
+                    val products = snapshot?.documents?.mapNotNull { doc ->
+                        try {
+                            Product(
+                                id = doc.getString("id")!!,
+                                title = doc.getString("title") ?: "",
+                                category = doc.getString("category") ?: "",
+                                brand = doc.getString("brand") ?: "",
+                                price = doc.getString("price") ?: "",
+                                images = doc.getString("images") ?: "",
+                                description = doc.getString("description") ?: "",
+                                isFavorite = false
+                            )
+                        } catch (_: Exception) {
+                            null
+                        }
+                    } ?: emptyList()
+                    trySend(products)
+                }
+            awaitClose { listenerRegistration.remove() }
+        }
+
+        return productsFlow.combine(favoritesFlow) { products, favorites ->
+            products.map { product ->
+                product.copy(isFavorite = favorites.contains(product.id))
+            }
+        }
+    }
 }
