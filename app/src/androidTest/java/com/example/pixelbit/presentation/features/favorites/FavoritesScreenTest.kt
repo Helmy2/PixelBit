@@ -47,7 +47,12 @@ class FavoritesScreenTest {
 
         // When
         composeTestRule.setContent {
-            PixelbitTheme { FavoritesScreen(viewModel = viewModel) }
+            PixelbitTheme {
+                FavoritesScreen(
+                    viewModel = viewModel,
+                    onProductClick = {}
+                )
+            }
         }
 
         // Then
@@ -59,7 +64,12 @@ class FavoritesScreenTest {
 
         // When
         composeTestRule.setContent {
-            PixelbitTheme { FavoritesScreen(viewModel = viewModel) }
+            PixelbitTheme {
+                FavoritesScreen(
+                    viewModel = viewModel,
+                    onProductClick = {}
+                )
+            }
         }
 
         // Then
@@ -70,12 +80,25 @@ class FavoritesScreenTest {
     @Test
     fun givenOneFavorite_whenScreenLoaded_thenProductIsDisplayed() {
         // Given
-        whenever(repository.getFavoriteProducts()).thenReturn(flowOf(Result.success(listOf(testProduct))))
+        whenever(repository.getFavoriteProducts()).thenReturn(
+            flowOf(
+                Result.success(
+                    listOf(
+                        testProduct
+                    )
+                )
+            )
+        )
         viewModel = FavoritesViewModel(repository)
 
         // When
         composeTestRule.setContent {
-            PixelbitTheme { FavoritesScreen(viewModel = viewModel) }
+            PixelbitTheme {
+                FavoritesScreen(
+                    viewModel = viewModel,
+                    onProductClick = {}
+                )
+            }
         }
 
         // Then
@@ -91,7 +114,12 @@ class FavoritesScreenTest {
 
         // When
         composeTestRule.setContent {
-            PixelbitTheme { FavoritesScreen(viewModel = viewModel) }
+            PixelbitTheme {
+                FavoritesScreen(
+                    viewModel = viewModel,
+                    onProductClick = {}
+                )
+            }
         }
 
         // Then
@@ -99,4 +127,3 @@ class FavoritesScreenTest {
         composeTestRule.onNodeWithText("Error").assertIsDisplayed()
     }
 }
-

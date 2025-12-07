@@ -191,7 +191,11 @@ fun NavGraph(
                 }
 
                 entry<Screen.Favorites> {
-                    FavoritesScreen()
+                    FavoritesScreen(
+                        onProductClick = { productId ->
+                            navController.add(Screen.ProductDetails(productId))
+                        }
+                    )
                 }
 
                 entry<Screen.Address> {
