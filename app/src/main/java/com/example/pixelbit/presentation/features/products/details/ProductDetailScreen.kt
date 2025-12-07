@@ -188,7 +188,7 @@ fun ProductDetailContent(
                                 .fillMaxWidth()
                                 .offset(y = (-20).dp)
                                 .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
-                                .background(Color.White)
+                                .background(MaterialTheme.colorScheme.surface)
                                 .padding(24.dp)
                         ) {
                             // Title & Favorite
@@ -205,12 +205,15 @@ fun ProductDetailContent(
                                     onClick = onToggleFavorite,
                                     modifier = Modifier
                                         .size(40.dp)
-                                        .background(Color(0xFFF5F5F5), CircleShape)
+                                        .background(
+                                            MaterialTheme.colorScheme.surfaceVariant,
+                                            CircleShape
+                                        )
                                 ) {
                                     Icon(
                                         imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                                         contentDescription = "Favorite",
-                                        tint = if (isFavorite) Color.Red else Color.Gray,
+                                        tint = if (isFavorite) Color.Red else MaterialTheme.colorScheme.onSurfaceVariant,
                                         modifier = Modifier.size(24.dp)
                                     )
                                 }
@@ -235,7 +238,7 @@ fun ProductDetailContent(
                                 Spacer(modifier = Modifier.width(4.dp))
                                 Text(
                                     text = "(${currentProduct.reviewCount} Reviews)",
-                                    color = Color.Gray,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     fontSize = 14.sp
                                 )
                             }
@@ -256,7 +259,7 @@ fun ProductDetailContent(
                                     }
                                 },
                                 style = MaterialTheme.typography.bodyMedium.copy(
-                                    color = Color.Gray,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     lineHeight = 20.sp
                                 ),
                                 maxLines = 4,
@@ -315,14 +318,14 @@ fun QuantityButton(
         modifier = Modifier
             .size(32.dp)
             .clip(CircleShape)
-            .background(if (isPlus) MaterialTheme.colorScheme.onBackground else Color(0xFFF0F0F0))
+            .background(if (isPlus) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant)
             .clickable(enabled = enabled, onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
         Icon(
             icon,
             null,
-            tint = if (isPlus) Color.White else Color.Black,
+            tint = if (isPlus) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.size(16.dp)
         )
     }
@@ -333,7 +336,7 @@ fun BottomCartBar(price: Double, onAddToCart: () -> Unit) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shadowElevation = 16.dp,
-        color = Color.White,
+        color = MaterialTheme.colorScheme.surfaceContainer,
         shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
     ) {
         Row(
@@ -344,12 +347,12 @@ fun BottomCartBar(price: Double, onAddToCart: () -> Unit) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
-                Text("Price", style = MaterialTheme.typography.bodyMedium.copy(color = Color.Gray))
+                Text("Price", style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant))
                 Text(
                     "$${String.format("%.2f", price)}",
                     style = MaterialTheme.typography.headlineMedium.copy(
                         fontWeight = FontWeight.Bold,
-                        color = Color.Black
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 )
             }
