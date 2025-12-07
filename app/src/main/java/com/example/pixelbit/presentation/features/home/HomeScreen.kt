@@ -1,5 +1,6 @@
 package com.example.pixelbit.presentation.features.home
 
+import android.R.attr.onClick
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -60,7 +61,7 @@ import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
+fun HomeScreen(viewModel: HomeViewModel = koinViewModel(),onProductClick: (String) -> Unit) {
 
     val user by viewModel.user.collectAsStateWithLifecycle()
     val products by viewModel.products.collectAsStateWithLifecycle()
@@ -124,7 +125,8 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
                                 ProductItem(
                                     product = product,
                                     onFavoriteClick = { viewModel.toggleFavorite(it) },
-                                    onAddToCart = { viewModel.addToCart(it) }
+                                    onAddToCart = { viewModel.addToCart(it) },
+                                    onClick = { onProductClick(product.id) }
                                 )
                             }
 

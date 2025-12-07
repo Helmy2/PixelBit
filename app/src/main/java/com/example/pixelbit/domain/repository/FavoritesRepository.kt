@@ -4,9 +4,9 @@ import com.example.pixelbit.domain.model.Product
 import kotlinx.coroutines.flow.Flow
 
 interface FavoritesRepository {
-    fun getFavoriteProducts(): Flow<Result<List<Product>>>
-    suspend fun addToFavorites(productId: String): Result<Unit>
-    suspend fun removeFromFavorites(productId: String): Result<Unit>
+    suspend fun getFavoriteProducts(userId: String): Flow<Result<List<Product>>>
+    suspend fun addToFavorites(userId: String, product: Product): Result<Unit>
+    suspend fun removeFromFavorites(userId: String, productId: String): Result<Unit>
     suspend fun isFavorite(productId: String): Boolean
 }
 

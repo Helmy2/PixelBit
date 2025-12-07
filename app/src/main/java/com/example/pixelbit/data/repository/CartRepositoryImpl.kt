@@ -65,7 +65,9 @@ class CartRepositoryImpl(
         title: String,
         brand: String,
         price: String,
-        images: String
+        images: String,
+        quantity: Int,
+        userId: String,
     ): Result<Unit> {
         return try {
             val userId = getCurrentUserId()
@@ -95,6 +97,7 @@ class CartRepositoryImpl(
                     "price" to price,
                     "images" to images,
                     "quantity" to 1,
+                    "userId" to userId,
                     "addedAt" to System.currentTimeMillis()
                 )
 

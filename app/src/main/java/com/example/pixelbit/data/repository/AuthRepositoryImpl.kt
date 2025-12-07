@@ -253,4 +253,8 @@ class AuthRepositoryImpl(
             emit(AuthResult.Error(e.message ?: "Failed to send reset email"))
         }
     }
+
+    override fun getCurrentUserId(): String? {
+        return firebaseAuth.currentUser?.uid
+    }
 }

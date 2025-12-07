@@ -52,11 +52,18 @@ class HomeViewModel(
             }
             try {
                 launch {
-                    shopRepository.getProducts().collect {
-                        _products.value = it
+                    shopRepository.getProducts().collect { products ->
+                        val updatedProducts = products.map { product ->
+                            val isFavorite = try {
+                                favoritesRepository.isFavorite(product.id)
+                            } catch (e: Exception) {
+                                false
+                            }
+                            product.copy(isFavorite = isFavorite)
+                        }
+                        _products.value = updatedProducts
                     }
                 }
-
                 val user = authRepository.getCurrentUser()
                 val categoriesResult = shopRepository.getCategories()
                 val bannersResult = shopRepository.getBanners()
@@ -77,6 +84,8 @@ class HomeViewModel(
 
     fun toggleFavorite(productId: String) {
         viewModelScope.launch {
+            val userId = _user.value?.uid ?: return@launch // Return if user is not logged in
+
             var wasFavorite = true
             val currentProducts = _products.value.map {
                 if (it.id == productId) {
@@ -91,9 +100,9 @@ class HomeViewModel(
             try {
                 val product = currentProducts.first { it.id == productId }
                 if (wasFavorite) {
-                    favoritesRepository.removeFromFavorites(product.id)
+                    favoritesRepository.removeFromFavorites(userId, productId)
                 } else {
-                    favoritesRepository.addToFavorites(product.id)
+                    favoritesRepository.addToFavorites(userId, product)
                 }
             } catch (e: Exception) {
                 _products.value = _products.value.map {
@@ -108,7 +117,7 @@ class HomeViewModel(
         }
     }
 
-    fun addToCart(product: Product) {
+    fun addToCart(product: Product, quantity: Int = 1, userId: String = "current_user_id") {
         viewModelScope.launch {
             try {
                 cartRepository.addToCart(
@@ -116,7 +125,9 @@ class HomeViewModel(
                     title = product.title,
                     brand = product.brand,
                     price = product.price,
-                    images = product.images
+                    images = product.images,
+                    quantity = quantity,
+                    userId = userId
                 )
             } catch (e: Exception) {
                 e.printStackTrace()

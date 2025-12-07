@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.add
 import androidx.compose.material3.Icon
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
@@ -29,6 +30,7 @@ import com.example.pixelbit.presentation.features.favorites.FavoritesScreen
 import com.example.pixelbit.presentation.features.home.HomeScreen
 import com.example.pixelbit.presentation.features.myorders.MyOrdersScreen
 import com.example.pixelbit.presentation.features.onboarding.OnboardingScreen
+import com.example.pixelbit.presentation.features.product.detail.ProductDetailScreen
 import com.example.pixelbit.presentation.features.profile.ProfileScreen
 
 @Composable
@@ -142,8 +144,27 @@ fun NavGraph(
                     )
                 }
 
+                entry<Screen.ProductDetails> { screen ->
+                    ProductDetailScreen(
+                        productId = screen.productId,
+                        onBackClick = {
+                            // Remove this screen from the back stack
+                            navController.back()
+                        },
+                        onCartClick = {
+                            // Navigate to Cart
+                            navController.add(Screen.Cart)
+                        },
+
+                    )
+                }
+
                 entry<Screen.Home> {
-                    HomeScreen()
+                    HomeScreen(
+                        onProductClick = { productId ->
+                            navController.add(Screen.ProductDetails(productId))
+                        }
+                    )
                 }
 
                 entry<Screen.Profile> {

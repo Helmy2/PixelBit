@@ -1,8 +1,11 @@
 package com.example.pixelbit.data.repository
 
+import androidx.compose.animation.core.copy
 import com.example.pixelbit.domain.model.Product
+import com.example.pixelbit.domain.repository.AuthRepository
 import com.example.pixelbit.domain.repository.FavoritesRepository
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
@@ -13,103 +16,81 @@ import kotlinx.coroutines.tasks.await
 
 class FavoritesRepositoryImpl(
     private val firebaseAuth: FirebaseAuth,
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
 ) : FavoritesRepository {
 
-    private fun getCurrentUserId(): String? = firebaseAuth.currentUser?.uid
+    override suspend fun getFavoriteProducts(userId: String): Flow<Result<List<Product>>> =
+        callbackFlow {
+            val listener = firestore.collection("users").document(userId)
+                .addSnapshotListener { snapshot, error ->
+                    if (error != null) {
+                        trySend(Result.failure(error))
+                        return@addSnapshotListener
+                    }
 
-    override fun getFavoriteProducts(): Flow<Result<List<Product>>> = callbackFlow {
-        val userId = getCurrentUserId()
-        if (userId == null) {
-            trySend(Result.failure(Exception("User not logged in")))
-            close()
-            return@callbackFlow
-        }
+                    if (snapshot != null && snapshot.exists()) {
+                        @Suppress("UNCHECKED_CAST")
+                        val favoriteIds = snapshot.get("favorites") as? List<String> ?: emptyList()
 
-        val listener = firestore.collection("users")
-            .document(userId)
-            .addSnapshotListener { userSnapshot, error ->
-                if (error != null) {
-                    trySend(Result.failure(error))
-                    return@addSnapshotListener
-                }
-
-                if (userSnapshot == null || !userSnapshot.exists()) {
-                    trySend(Result.success(emptyList()))
-                    return@addSnapshotListener
-                }
-
-                val favoriteIds = userSnapshot.get("favorites") as? List<*>
-                if (favoriteIds.isNullOrEmpty()) {
-                    trySend(Result.success(emptyList()))
-                    return@addSnapshotListener
-                }
-
-                val productIds = favoriteIds.filterIsInstance<String>()
-                if (productIds.isEmpty()) {
-                    trySend(Result.success(emptyList()))
-                    return@addSnapshotListener
-                }
-
-                launch {
-                    try {
-                        val productsSnapshot = firestore.collection("products")
-                            .whereIn("id", productIds)
-                            .get()
-                            .await()
-
-                        val products = productsSnapshot.documents.mapNotNull { doc ->
-                            try {
-                                Product(
-                                    id = doc.getString("id") ?: "",
-                                    title = doc.getString("title") ?: "",
-                                    brand = doc.getString("brand") ?: "",
-                                    category = doc.getString("category") ?: "",
-                                    description = doc.getString("description") ?: "",
-                                    price = doc.getString("price") ?: "",
-                                    images = doc.getString("images") ?: "",
-                                    isFavorite = true
-                                )
-                            } catch (_: Exception) {
-                                null
+                        if (favoriteIds.isEmpty()) {
+                            trySend(Result.success(emptyList()))
+                        } else {
+                            launch {
+                                try {
+                                    val products = fetchProductsByIds(favoriteIds)
+                                    trySend(Result.success(products))
+                                } catch (e: Exception) {
+                                    trySend(Result.failure(e))
+                                }
                             }
                         }
-                        trySend(Result.success(products))
-                    } catch (exception: Exception) {
-                        trySend(Result.failure(exception))
+                    } else {
+                        trySend(Result.success(emptyList()))
                     }
                 }
-            }
 
-        awaitClose { listener.remove() }
-    }
+            awaitClose { listener.remove() }
+        }
 
-    override suspend fun addToFavorites(productId: String): Result<Unit> {
-        return try {
-            val userId = getCurrentUserId()
-                ?: return Result.failure(Exception("User not logged in"))
+    private suspend fun fetchProductsByIds(ids: List<String>): List<Product> {
+        val products = mutableListOf<Product>()
 
-            firestore.collection("users")
-                .document(userId)
-                .update("favorites", FieldValue.arrayUnion(productId))
+        ids.chunked(10).forEach { chunk ->
+            val snapshot = firestore.collection("products")
+                .whereIn(FieldPath.documentId(), chunk)
+                .get()
                 .await()
 
+            val chunkProducts = snapshot.documents.mapNotNull { doc ->
+                doc.toObject(Product::class.java)?.copy(
+                    id = doc.id,
+                    isFavorite = true
+                )
+            }
+            products.addAll(chunkProducts)
+        }
+        return products
+    }
+
+    override suspend fun addToFavorites(userId: String, product: Product): Result<Unit> {
+        return try {
+            firestore.collection("users")
+                .document(userId)
+                .update("favorites", FieldValue.arrayUnion(product.id))
+                .await()
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
         }
     }
 
-    override suspend fun removeFromFavorites(productId: String): Result<Unit> {
+    override suspend fun removeFromFavorites(userId: String, productId: String): Result<Unit> {
         return try {
-            val userId = getCurrentUserId()
-                ?: return Result.failure(Exception("User not logged in"))
-
             firestore.collection("users")
                 .document(userId)
-                .update("favorites", FieldValue.arrayRemove(productId))
+                .update("favorites", FieldValue
+                    .arrayRemove(productId))
                 .await()
-
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -117,19 +98,13 @@ class FavoritesRepositoryImpl(
     }
 
     override suspend fun isFavorite(productId: String): Boolean {
-        return try {
-            val userId = getCurrentUserId() ?: return false
-
-            val document = firestore.collection("users")
-                .document(userId)
-                .get()
-                .await()
-
-            val favorites = document.get("favorites") as? List<*>
-            favorites?.contains(productId) == true
-        } catch (_: Exception) {
-            false
-        }
+        val userId = firebaseAuth.currentUser?.uid ?: return false
+        val userDoc = firestore.collection("users")
+            .document(userId)
+            .get()
+            .await()
+        val favorites = userDoc.get("favorites") as? List<*>
+        return favorites?.contains(productId) == true
     }
 }
 
