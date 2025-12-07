@@ -4,7 +4,6 @@ import ProductRepository
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pixelbit.domain.model.Product
-import com.example.pixelbit.domain.repository.AuthRepository
 import com.example.pixelbit.domain.repository.CartRepository
 import com.example.pixelbit.domain.repository.FavoritesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,8 +13,7 @@ import kotlinx.coroutines.launch
 
 class ProductDetailViewModel(
     private val productRepository: ProductRepository,
-    private val favoritesRepository: FavoritesRepository, // Inject this
-    private val authRepository: AuthRepository,
+    private val favoritesRepository: FavoritesRepository,
     private val cartRepository: CartRepository,
 ) : ViewModel() {
 
@@ -58,11 +56,9 @@ class ProductDetailViewModel(
     }
 
     private fun checkIfFavorite(productId: String) {
-        val userId = authRepository.getCurrentUserId() ?: return
-
         viewModelScope.launch {
             try {
-                favoritesRepository.getFavoriteProducts(userId).collect { result ->
+                favoritesRepository.getFavoriteProducts().collect { result ->
                     result.onSuccess { favorites ->
                         _isFavorite.value = favorites.any { it.id == productId }
                     }
@@ -73,18 +69,17 @@ class ProductDetailViewModel(
     }
     fun toggleFavorite() {
         val product = _productState.value ?: return
-        val userId = authRepository.getCurrentUserId() ?: return
 
         viewModelScope.launch {
             if (_isFavorite.value) {
                 // Remove
-                val result = favoritesRepository.removeFromFavorites(userId, product.id)
+                val result = favoritesRepository.removeFromFavorites(product.id)
                 if (result.isSuccess) {
                     _isFavorite.value = false
                 }
             } else {
                 // Add
-                val result = favoritesRepository.addToFavorites(userId, product)
+                val result = favoritesRepository.addToFavorites(product.id)
                 if (result.isSuccess) {
                     _isFavorite.value = true
                 }
@@ -104,7 +99,6 @@ class ProductDetailViewModel(
 
     fun addToCart() {
         val currentProduct = _productState.value ?: return
-        val currentUserId = authRepository.getCurrentUserId() ?: return
         val qty = _quantity.value
 
         viewModelScope.launch {
@@ -117,7 +111,6 @@ class ProductDetailViewModel(
                 price = currentProduct.price,
                 images = currentProduct.images,
                 quantity = qty,
-                userId = currentUserId
             )
             _isLoading.value = false
 

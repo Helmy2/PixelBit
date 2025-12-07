@@ -7,7 +7,6 @@ import com.example.pixelbit.domain.model.Category
 import com.example.pixelbit.domain.model.Product
 import com.example.pixelbit.domain.model.User
 import com.example.pixelbit.domain.repository.AuthRepository
-import com.example.pixelbit.domain.repository.CartRepository
 import com.example.pixelbit.domain.repository.FavoritesRepository
 import com.example.pixelbit.domain.repository.ShopRepository
 import com.example.pixelbit.presentation.navigation.AppNavigator
@@ -20,7 +19,6 @@ class HomeViewModel(
     private val shopRepository: ShopRepository,
     private val authRepository: AuthRepository,
     private val favoritesRepository: FavoritesRepository,
-    private val cartRepository: CartRepository,
     private val navController: AppNavigator
 ) : ViewModel() {
 
@@ -114,9 +112,9 @@ class HomeViewModel(
             try {
                 val product = currentProducts.first { it.id == productId }
                 if (wasFavorite) {
-                    favoritesRepository.removeFromFavorites(userId, productId)
+                    favoritesRepository.removeFromFavorites(productId)
                 } else {
-                    favoritesRepository.addToFavorites(userId, product)
+                    favoritesRepository.addToFavorites(productId)
                 }
             } catch (e: Exception) {
                 _products.value = _products.value.map {
@@ -131,21 +129,7 @@ class HomeViewModel(
         }
     }
 
-    fun addToCart(product: Product, quantity: Int = 1, userId: String = "current_user_id") {
-        viewModelScope.launch {
-            try {
-                cartRepository.addToCart(
-                    productId = product.id,
-                    title = product.title,
-                    brand = product.brand,
-                    price = product.price,
-                    images = product.images,
-                    quantity = quantity,
-                    userId = userId
-                )
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
+    fun onProfileClicked() {
+        navController.addTopLevel(Screen.Profile)
     }
 }

@@ -1,8 +1,6 @@
 package com.example.pixelbit.data.repository
 
-import androidx.compose.animation.core.copy
 import com.example.pixelbit.domain.model.Product
-import com.example.pixelbit.domain.repository.AuthRepository
 import com.example.pixelbit.domain.repository.FavoritesRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldPath
@@ -19,9 +17,12 @@ class FavoritesRepositoryImpl(
     private val firestore: FirebaseFirestore,
 ) : FavoritesRepository {
 
-    override suspend fun getFavoriteProducts(userId: String): Flow<Result<List<Product>>> =
+    override fun getFavoriteProducts(): Flow<Result<List<Product>>> =
         callbackFlow {
-            val listener = firestore.collection("users").document(userId)
+            val userId = firebaseAuth.currentUser!!.uid
+
+            val listener = firestore.collection("users")
+                .document(userId)
                 .addSnapshotListener { snapshot, error ->
                     if (error != null) {
                         trySend(Result.failure(error))
@@ -72,11 +73,14 @@ class FavoritesRepositoryImpl(
         return products
     }
 
-    override suspend fun addToFavorites(userId: String, product: Product): Result<Unit> {
+    override suspend fun addToFavorites(productId: String): Result<Unit> {
         return try {
+            val userId = firebaseAuth.currentUser?.uid
+                ?: return Result.failure(Exception("User not logged in"))
+
             firestore.collection("users")
                 .document(userId)
-                .update("favorites", FieldValue.arrayUnion(product.id))
+                .update("favorites", FieldValue.arrayUnion(productId))
                 .await()
             Result.success(Unit)
         } catch (e: Exception) {
@@ -84,12 +88,18 @@ class FavoritesRepositoryImpl(
         }
     }
 
-    override suspend fun removeFromFavorites(userId: String, productId: String): Result<Unit> {
+    override suspend fun removeFromFavorites(productId: String): Result<Unit> {
         return try {
+            val userId = firebaseAuth.currentUser?.uid
+                ?: return Result.failure(Exception("User not logged in"))
+
+
             firestore.collection("users")
                 .document(userId)
-                .update("favorites", FieldValue
-                    .arrayRemove(productId))
+                .update(
+                    "favorites", FieldValue
+                        .arrayRemove(productId)
+                )
                 .await()
             Result.success(Unit)
         } catch (e: Exception) {

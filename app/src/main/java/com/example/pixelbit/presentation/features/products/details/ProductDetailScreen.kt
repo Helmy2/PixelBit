@@ -59,7 +59,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.pixelbit.R
 import com.example.pixelbit.domain.model.Product
@@ -173,23 +172,15 @@ fun ProductDetailContent(
                     ) {
 
                         // Image Area
-                        Box(
+                        AsyncImage(
+                            model = currentProduct.images,
+                            contentDescription = currentProduct.title,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(350.dp)
-                                .background(Color(0xFFF5F5F5)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            AsyncImage(
-                                model = currentProduct.images.firstOrNull(),
-                                contentDescription = currentProduct.title,
-                                modifier = Modifier
-                                    .fillMaxSize()
-                                    .padding(32.dp),
-                                contentScale = ContentScale.Fit,
-                                //error = painterResource(id = R.drawable.ic_launcher_foreground)
-                            )
-                        }
+                                .height(350.dp),
+                            contentScale = ContentScale.Crop,
+                            error = painterResource(id = R.drawable.ic_launcher_foreground)
+                        )
 
                         // Details Card
                         Column(

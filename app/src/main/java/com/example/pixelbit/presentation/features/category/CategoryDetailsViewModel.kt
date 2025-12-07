@@ -3,10 +3,11 @@ package com.example.pixelbit.presentation.features.category
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pixelbit.domain.model.Product
-import com.example.pixelbit.domain.repository.CartRepository
+import com.example.pixelbit.domain.repository.AuthRepository
 import com.example.pixelbit.domain.repository.FavoritesRepository
 import com.example.pixelbit.domain.repository.ShopRepository
 import com.example.pixelbit.presentation.navigation.AppNavigator
+import com.example.pixelbit.presentation.navigation.Screen
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,10 +22,10 @@ data class CategoryDetailsState(
 )
 
 class CategoryDetailsViewModel(
+    private val authRepository: AuthRepository,
     private val shopRepository: ShopRepository,
     private val favoritesRepository: FavoritesRepository,
-    private val cartRepository: CartRepository,
-    private val navigator: AppNavigator
+    private val navigator: AppNavigator,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(CategoryDetailsState())
@@ -78,22 +79,9 @@ class CategoryDetailsViewModel(
         }
     }
 
-    fun addToCart(product: Product) {
-        viewModelScope.launch {
-            try {
-                cartRepository.addToCart(
-                    productId = product.id,
-                    title = product.title,
-                    brand = product.brand,
-                    price = product.price,
-                    images = product.images
-                )
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
+    fun onProductClick(id: String) {
+        navigator.add(Screen.ProductDetails(id))
     }
-
     fun onBackClick() {
         navigator.back()
     }

@@ -1,6 +1,5 @@
 package com.example.pixelbit.presentation.features.home
 
-import android.R.attr.onClick
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -70,7 +69,8 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel(),onProductClick: (Strin
     val selectedTabIndex by viewModel.selectedTabIndex.collectAsStateWithLifecycle()
 
     Scaffold(
-        topBar = { HomeTopBar(user) }, contentWindowInsets = WindowInsets()
+        topBar = { HomeTopBar(user, viewModel::onProfileClicked) },
+        contentWindowInsets = WindowInsets()
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
             HomeTabs(
@@ -123,7 +123,6 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel(),onProductClick: (Strin
                                 ProductItem(
                                     product = product,
                                     onFavoriteClick = { viewModel.toggleFavorite(it) },
-                                    onAddToCart = { viewModel.addToCart(it) },
                                     onClick = { onProductClick(product.id) }
                                 )
                             }
@@ -211,14 +210,16 @@ fun HomeTabs(selectedIndex: Int, onTabSelected: (Int) -> Unit) {
 
 @Composable
 fun HomeTopBar(
-    user: User?
+    user: User?,
+    onProfileClicked: () -> Unit
 ) {
     val context = LocalContext.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .statusBarsPadding(),
+            .statusBarsPadding()
+            .clickable(onClick = onProfileClicked),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {

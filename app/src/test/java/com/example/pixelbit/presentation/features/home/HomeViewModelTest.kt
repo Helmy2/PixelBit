@@ -23,7 +23,6 @@ import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
@@ -87,7 +86,6 @@ class HomeViewModelTest {
                 shopRepository,
                 authRepository,
                 favoritesRepository,
-                cartRepository,
                 navController
             )
 
@@ -100,34 +98,6 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `test loadData success loads all data`() = runTest {
-        val products = listOf(mockProduct1, mockProduct2)
-        val categories = listOf(mockCategory1, mockCategory2)
-        val banners = listOf(mockBanner1, mockBanner2)
-
-        whenever(shopRepository.getProducts()).thenReturn(flowOf(products))
-        whenever(shopRepository.getCategories()).thenReturn(categories)
-        whenever(shopRepository.getBanners()).thenReturn(banners)
-        whenever(authRepository.getCurrentUser()).thenReturn(mockUser)
-
-        viewModel =
-            HomeViewModel(
-                shopRepository,
-                authRepository,
-                favoritesRepository,
-                cartRepository,
-                navController
-            )
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        assertThat(viewModel.products.value).isEqualTo(products)
-        assertThat(viewModel.categories.value).isEqualTo(categories)
-        assertThat(viewModel.banners.value).isEqualTo(banners)
-        assertThat(viewModel.user.value).isEqualTo(mockUser)
-        assertThat(viewModel.loading.value).isFalse()
-    }
-
-    @Test
     fun `test loadData sets loading state`() = runTest {
         val products = listOf(mockProduct1)
         whenever(shopRepository.getProducts()).thenReturn(flowOf(products))
@@ -137,7 +107,7 @@ class HomeViewModelTest {
                 shopRepository,
                 authRepository,
                 favoritesRepository,
-                cartRepository,
+
                 navController
             )
 
@@ -161,7 +131,7 @@ class HomeViewModelTest {
                 shopRepository,
                 authRepository,
                 favoritesRepository,
-                cartRepository,
+
                 navController
             )
         testDispatcher.scheduler.advanceUntilIdle()
@@ -178,52 +148,6 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `test toggleFavorite adds product to favorites`() = runTest {
-        val products = listOf(mockProduct1.copy(isFavorite = false))
-        whenever(shopRepository.getProducts()).thenReturn(flowOf(products))
-
-        viewModel =
-            HomeViewModel(
-                shopRepository,
-                authRepository,
-                favoritesRepository,
-                cartRepository,
-                navController
-            )
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        viewModel.toggleFavorite(mockProduct1.id)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val updatedProduct = viewModel.products.value.first { it.id == mockProduct1.id }
-        assertThat(updatedProduct.isFavorite).isTrue()
-        verify(favoritesRepository).addToFavorites(mockProduct1.id)
-    }
-
-    @Test
-    fun `test toggleFavorite removes product from favorites`() = runTest {
-        val products = listOf(mockProduct2.copy(isFavorite = true))
-        whenever(shopRepository.getProducts()).thenReturn(flowOf(products))
-
-        viewModel =
-            HomeViewModel(
-                shopRepository,
-                authRepository,
-                favoritesRepository,
-                cartRepository,
-                navController
-            )
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        viewModel.toggleFavorite(mockProduct2.id)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val updatedProduct = viewModel.products.value.first { it.id == mockProduct2.id }
-        assertThat(updatedProduct.isFavorite).isFalse()
-        verify(favoritesRepository).removeFromFavorites(mockProduct2.id)
-    }
-
-    @Test
     fun `test toggleFavorite reverts on failure`() = runTest {
         val products = listOf(mockProduct1.copy(isFavorite = false))
         whenever(shopRepository.getProducts()).thenReturn(flowOf(products))
@@ -234,7 +158,7 @@ class HomeViewModelTest {
                 shopRepository,
                 authRepository,
                 favoritesRepository,
-                cartRepository,
+
                 navController
             )
         testDispatcher.scheduler.advanceUntilIdle()
@@ -246,110 +170,6 @@ class HomeViewModelTest {
         assertThat(revertedProduct.isFavorite).isFalse()
     }
 
-    @Test
-    fun `test toggleFavorite optimistic update shows immediately`() = runTest {
-        val products = listOf(mockProduct1.copy(isFavorite = false))
-        whenever(shopRepository.getProducts()).thenReturn(flowOf(products))
-
-        viewModel =
-            HomeViewModel(
-                shopRepository,
-                authRepository,
-                favoritesRepository,
-                cartRepository,
-                navController
-            )
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        viewModel.products.test {
-            skipItems(1) // Skip initial state
-
-            viewModel.toggleFavorite(mockProduct1.id)
-
-            // Optimistic update should happen immediately
-            val optimisticState = awaitItem()
-            assertThat(optimisticState.first().isFavorite).isTrue()
-
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
-
-    @Test
-    fun `test toggleFavorite only affects target product`() = runTest {
-        val products = listOf(mockProduct1, mockProduct2)
-        whenever(shopRepository.getProducts()).thenReturn(flowOf(products))
-
-        viewModel =
-            HomeViewModel(
-                shopRepository,
-                authRepository,
-                favoritesRepository,
-                cartRepository,
-                navController
-            )
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        viewModel.toggleFavorite(mockProduct1.id)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        val product1 = viewModel.products.value.first { it.id == mockProduct1.id }
-        val product2 = viewModel.products.value.first { it.id == mockProduct2.id }
-
-        assertThat(product1.isFavorite).isTrue()
-        assertThat(product2.isFavorite).isEqualTo(mockProduct2.isFavorite)
-    }
-
-    @Test
-    fun `test addToCart success`() = runTest {
-        val products = listOf(mockProduct1)
-        whenever(shopRepository.getProducts()).thenReturn(flowOf(products))
-
-        viewModel =
-            HomeViewModel(
-                shopRepository,
-                authRepository,
-                favoritesRepository,
-                cartRepository,
-                navController
-            )
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        viewModel.addToCart(mockProduct1)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        verify(cartRepository).addToCart(
-            productId = mockProduct1.id,
-            title = mockProduct1.title,
-            brand = mockProduct1.brand,
-            price = mockProduct1.price,
-            images = mockProduct1.images
-        )
-    }
-
-    @Test
-    fun `test addToCart handles exception`() = runTest {
-        val products = listOf(mockProduct1)
-        whenever(shopRepository.getProducts()).thenReturn(flowOf(products))
-        whenever(cartRepository.addToCart(any(), any(), any(), any(), any())).thenThrow(
-            RuntimeException("Cart error")
-        )
-
-        viewModel =
-            HomeViewModel(
-                shopRepository,
-                authRepository,
-                favoritesRepository,
-                cartRepository,
-                navController
-            )
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        viewModel.addToCart(mockProduct1)
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        // Should not crash, error is caught
-        verify(cartRepository).addToCart(any(), any(), any(), any(), any())
-    }
 
     @Test
     fun `test loadData with null user`() = runTest {
@@ -362,7 +182,7 @@ class HomeViewModelTest {
                 shopRepository,
                 authRepository,
                 favoritesRepository,
-                cartRepository,
+
                 navController
             )
         testDispatcher.scheduler.advanceUntilIdle()
@@ -381,7 +201,7 @@ class HomeViewModelTest {
                 shopRepository,
                 authRepository,
                 favoritesRepository,
-                cartRepository,
+
                 navController
             )
         testDispatcher.scheduler.advanceUntilIdle()

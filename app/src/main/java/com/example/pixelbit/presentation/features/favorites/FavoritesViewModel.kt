@@ -3,7 +3,6 @@ package com.example.pixelbit.presentation.features.favorites
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pixelbit.domain.model.Product
-import com.example.pixelbit.domain.repository.AuthRepository
 import com.example.pixelbit.domain.repository.FavoritesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,7 +18,6 @@ data class FavoritesUiState(
 
 class FavoritesViewModel(
     private val favoritesRepository: FavoritesRepository,
-    private val authRepository: AuthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FavoritesUiState())
@@ -33,7 +31,7 @@ class FavoritesViewModel(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
 
-            favoritesRepository.getFavoriteProducts(authRepository.getCurrentUserId()!!).collect { result ->
+            favoritesRepository.getFavoriteProducts().collect { result ->
                 result.onSuccess { products ->
                     _uiState.value = _uiState.value.copy(
                         favoriteProducts = products,
@@ -54,8 +52,7 @@ class FavoritesViewModel(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isRemoving = true)
 
-            val result = favoritesRepository.removeFromFavorites(authRepository.getCurrentUserId()!!,
-                productId)
+            val result = favoritesRepository.removeFromFavorites(productId)
 
             result.onSuccess {
                 _uiState.value = _uiState.value.copy(isRemoving = false)
