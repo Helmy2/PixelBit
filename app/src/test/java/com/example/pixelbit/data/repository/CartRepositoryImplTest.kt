@@ -39,7 +39,7 @@ class CartRepositoryImplTest {
     @Test
     fun `given No User when Add To Cart then Returns Error`() = runTest {
         // When
-        val result = repository.addToCart("1", "title", "brand", "100", "image")
+        val result = repository.addToCart("1", "title", "brand", "100", "image", quantity = 1)
 
         // Then
         assertTrue(result.isFailure)

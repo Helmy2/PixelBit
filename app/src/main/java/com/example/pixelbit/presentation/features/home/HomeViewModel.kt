@@ -7,7 +7,6 @@ import com.example.pixelbit.domain.model.Category
 import com.example.pixelbit.domain.model.Product
 import com.example.pixelbit.domain.model.User
 import com.example.pixelbit.domain.repository.AuthRepository
-import com.example.pixelbit.domain.repository.CartRepository
 import com.example.pixelbit.domain.repository.FavoritesRepository
 import com.example.pixelbit.domain.repository.ShopRepository
 import com.example.pixelbit.presentation.navigation.AppNavigator
@@ -20,7 +19,6 @@ class HomeViewModel(
     private val shopRepository: ShopRepository,
     private val authRepository: AuthRepository,
     private val favoritesRepository: FavoritesRepository,
-    private val cartRepository: CartRepository,
     private val navController: AppNavigator
 ) : ViewModel() {
 
@@ -58,11 +56,18 @@ class HomeViewModel(
             }
             try {
                 launch {
-                    shopRepository.getProducts().collect {
-                        _products.value = it
+                    shopRepository.getProducts().collect { products ->
+                        val updatedProducts = products.map { product ->
+                            val isFavorite = try {
+                                favoritesRepository.isFavorite(product.id)
+                            } catch (e: Exception) {
+                                false
+                            }
+                            product.copy(isFavorite = isFavorite)
+                        }
+                        _products.value = updatedProducts
                     }
                 }
-
                 val user = authRepository.getCurrentUser()
                 val categoriesResult = shopRepository.getCategories()
                 val bannersResult = shopRepository.getBanners()
@@ -91,6 +96,8 @@ class HomeViewModel(
 
     fun toggleFavorite(productId: String) {
         viewModelScope.launch {
+            val userId = _user.value?.uid ?: return@launch // Return if user is not logged in
+
             var wasFavorite = true
             val currentProducts = _products.value.map {
                 if (it.id == productId) {
@@ -105,9 +112,9 @@ class HomeViewModel(
             try {
                 val product = currentProducts.first { it.id == productId }
                 if (wasFavorite) {
-                    favoritesRepository.removeFromFavorites(product.id)
+                    favoritesRepository.removeFromFavorites(productId)
                 } else {
-                    favoritesRepository.addToFavorites(product.id)
+                    favoritesRepository.addToFavorites(productId)
                 }
             } catch (e: Exception) {
                 _products.value = _products.value.map {
@@ -122,19 +129,7 @@ class HomeViewModel(
         }
     }
 
-    fun addToCart(product: Product) {
-        viewModelScope.launch {
-            try {
-                cartRepository.addToCart(
-                    productId = product.id,
-                    title = product.title,
-                    brand = product.brand,
-                    price = product.price,
-                    images = product.images
-                )
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
+    fun onProfileClicked() {
+        navController.addTopLevel(Screen.Profile)
     }
 }

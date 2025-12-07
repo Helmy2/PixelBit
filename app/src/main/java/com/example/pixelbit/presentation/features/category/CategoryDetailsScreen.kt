@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -48,11 +47,6 @@ fun CategoryDetailsScreen(
                     IconButton(onClick = viewModel::onBackClick) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
-                },
-                actions = {
-                    IconButton(onClick = { /* TODO */ }) {
-                        Icon(Icons.Default.Notifications, contentDescription = "Notifications")
-                    }
                 }
             )
         }
@@ -75,7 +69,7 @@ fun CategoryDetailsScreen(
                     ProductItem(
                         product = product,
                         onFavoriteClick = { viewModel.toggleFavorite(it) },
-                        onAddToCart = { viewModel.addToCart(it) }
+                        onClick = { viewModel.onProductClick(product.id) }
                     )
                 }
             }

@@ -1,5 +1,6 @@
 package com.example.pixelbit.di
 
+import ProductRepository
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -11,6 +12,7 @@ import com.example.pixelbit.data.repository.CheckoutRepositoryImpl
 import com.example.pixelbit.data.repository.FavoritesRepositoryImpl
 import com.example.pixelbit.data.repository.OnboardingRepositoryImpl
 import com.example.pixelbit.data.repository.OrderRepositoryImpl
+import com.example.pixelbit.data.repository.ProductRepositoryImpl
 import com.example.pixelbit.data.repository.ShopRepositoryImpl
 import com.example.pixelbit.domain.repository.AddressRepository
 import com.example.pixelbit.domain.repository.AuthRepository
@@ -34,6 +36,7 @@ import com.example.pixelbit.presentation.features.favorites.FavoritesViewModel
 import com.example.pixelbit.presentation.features.home.HomeViewModel
 import com.example.pixelbit.presentation.features.myorders.MyOrdersViewModel
 import com.example.pixelbit.presentation.features.onboarding.OnboardingViewModel
+import com.example.pixelbit.presentation.features.products.details.ProductDetailViewModel
 import com.example.pixelbit.presentation.features.profile.ProfileViewModel
 import com.example.pixelbit.presentation.navigation.AppNavigator
 import com.google.firebase.auth.FirebaseAuth
@@ -54,6 +57,8 @@ val appModule = module {
     single { FirebaseAuth.getInstance() }
     single { FirebaseFirestore.getInstance() }
     single<DataStore<Preferences>> { androidContext().dataStore }
+    single<ProductRepository> { ProductRepositoryImpl(get()) }
+
 
     singleOf(::AuthRepositoryImpl).bind<AuthRepository>()
     singleOf(::OnboardingRepositoryImpl).bind<OnboardingRepository>()
@@ -78,5 +83,6 @@ val appModule = module {
     viewModelOf(::CheckoutViewModel)
     viewModelOf(::MyOrdersViewModel)
     viewModelOf(::AddressViewModel)
+    viewModelOf(::ProductDetailViewModel)
     viewModelOf(::CategoryDetailsViewModel)
 }

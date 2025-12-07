@@ -17,7 +17,7 @@ data class FavoritesUiState(
 )
 
 class FavoritesViewModel(
-    private val favoritesRepository: FavoritesRepository
+    private val favoritesRepository: FavoritesRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FavoritesUiState())

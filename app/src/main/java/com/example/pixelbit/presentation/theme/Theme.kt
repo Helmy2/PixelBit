@@ -2,6 +2,7 @@ package com.example.pixelbit.presentation.theme
 
 import android.app.Activity
 import android.os.Build
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -11,6 +12,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
@@ -85,6 +87,16 @@ fun PixelbitTheme(
         statusDelivered = StatusDelivered,
         statusCancelled = StatusCancelled
     )
+
+    val activity = LocalActivity.current
+
+    LaunchedEffect(darkTheme) {
+        activity?.let {
+            WindowCompat.getInsetsController(activity.window, activity.window.decorView).apply {
+                isAppearanceLightStatusBars = !darkTheme
+            }
+        }
+    }
 
     CompositionLocalProvider(
         LocalMyOrdersColors provides myOrdersColors

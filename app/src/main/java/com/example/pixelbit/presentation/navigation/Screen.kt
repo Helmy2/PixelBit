@@ -26,6 +26,9 @@ sealed class Screen {
     data object Home : Screen()
 
     @Serializable
+    data class ProductDetails(val productId: String) : Screen()
+
+    @Serializable
     data object Onboarding : Screen()
 
     @Serializable

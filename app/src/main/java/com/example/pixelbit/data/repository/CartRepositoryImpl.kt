@@ -65,7 +65,8 @@ class CartRepositoryImpl(
         title: String,
         brand: String,
         price: String,
-        images: String
+        images: String,
+        quantity: Int,
     ): Result<Unit> {
         return try {
             val userId = getCurrentUserId()
@@ -80,12 +81,12 @@ class CartRepositoryImpl(
 
             if (!existingItems.isEmpty) {
                 val docId = existingItems.documents[0].id
-                val currentQuantity = existingItems.documents[0].getLong("quantity")?.toInt() ?: 1
+                val currentQuantity = existingItems.documents[0].getLong("quantity")?.toInt() ?: 0
                 firestore.collection("users")
                     .document(userId)
                     .collection("cart")
                     .document(docId)
-                    .update("quantity", currentQuantity + 1)
+                    .update("quantity", currentQuantity + quantity)
                     .await()
             } else {
                 val cartItem = hashMapOf(
@@ -94,7 +95,8 @@ class CartRepositoryImpl(
                     "brand" to brand,
                     "price" to price,
                     "images" to images,
-                    "quantity" to 1,
+                    "quantity" to quantity,
+                    "userId" to userId,
                     "addedAt" to System.currentTimeMillis()
                 )
 

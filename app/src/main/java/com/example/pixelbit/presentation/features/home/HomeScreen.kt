@@ -58,7 +58,7 @@ import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
+fun HomeScreen(viewModel: HomeViewModel = koinViewModel(),onProductClick: (String) -> Unit) {
 
     val user by viewModel.user.collectAsStateWithLifecycle()
     val products by viewModel.products.collectAsStateWithLifecycle()
@@ -69,7 +69,8 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
     val selectedTabIndex by viewModel.selectedTabIndex.collectAsStateWithLifecycle()
 
     Scaffold(
-        topBar = { HomeTopBar(user) }, contentWindowInsets = WindowInsets()
+        topBar = { HomeTopBar(user, viewModel::onProfileClicked) },
+        contentWindowInsets = WindowInsets()
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
             HomeTabs(
@@ -122,7 +123,7 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
                                 ProductItem(
                                     product = product,
                                     onFavoriteClick = { viewModel.toggleFavorite(it) },
-                                    onAddToCart = { viewModel.addToCart(it) }
+                                    onClick = { onProductClick(product.id) }
                                 )
                             }
 
@@ -209,14 +210,16 @@ fun HomeTabs(selectedIndex: Int, onTabSelected: (Int) -> Unit) {
 
 @Composable
 fun HomeTopBar(
-    user: User?
+    user: User?,
+    onProfileClicked: () -> Unit
 ) {
     val context = LocalContext.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .statusBarsPadding(),
+            .statusBarsPadding()
+            .clickable(onClick = onProfileClicked),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {

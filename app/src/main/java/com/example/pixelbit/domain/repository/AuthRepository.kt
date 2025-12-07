@@ -32,4 +32,5 @@ interface AuthRepository {
     fun sendPasswordResetEmail(email: String): Flow<AuthResult<Unit>>
     
     suspend fun isEmailRegistered(email: String): Boolean
+    fun getCurrentUserId(): String?
 }

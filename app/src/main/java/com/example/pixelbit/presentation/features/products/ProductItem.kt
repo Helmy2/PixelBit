@@ -1,6 +1,7 @@
 package com.example.pixelbit.presentation.features.products
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,10 +14,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddShoppingCart
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -38,12 +39,19 @@ import com.example.pixelbit.domain.model.Product
 fun ProductItem(
     product: Product,
     onFavoriteClick: (String) -> Unit,
-    onAddToCart: (Product) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
-    Card {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
         Column(
-            modifier = modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Box(
@@ -59,6 +67,7 @@ fun ProductItem(
                     contentScale = ContentScale.Crop
                 )
 
+                // Favorite Button
                 Row(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
@@ -79,30 +88,14 @@ fun ProductItem(
                         )
                     }
                 }
-
-                IconButton(
-                    onClick = { onAddToCart(product) },
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(8.dp)
-                        .clip(CircleShape)
-                        .background(Color.Black.copy(alpha = 0.2f))
-                        .size(32.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.AddShoppingCart,
-                        contentDescription = "Add to Cart",
-                        tint = Color.White,
-                        modifier = Modifier.size(16.dp)
-                    )
-                }
             }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = product.title,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(horizontal = 4.dp)
             )
             if (product.brand.isNotEmpty())
                 Text(
@@ -135,6 +128,6 @@ fun ProductItemPreview() {
             isFavorite = true
         ),
         onFavoriteClick = {},
-        onAddToCart = {}
+        onClick = {}
     )
 }
