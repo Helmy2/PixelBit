@@ -32,7 +32,8 @@ class AddressViewModel(
 
     private fun loadAddresses() {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
+            if (_uiState.value.addresses.isEmpty())
+                _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
 
             addressRepository.getAddresses().collect { result ->
                 result.onSuccess { addresses ->
@@ -65,7 +66,14 @@ class AddressViewModel(
 
     fun onAddressSaved(address: Address) {
         viewModelScope.launch {
-            addressRepository.addAddress(address).onSuccess {
+            val result = if (_uiState.value.selectedAddress == null) {
+                addressRepository.addAddress(address)
+            } else {
+                addressRepository.updateAddress(address)
+            }
+
+            result.onSuccess {
+                loadAddresses()
                 onDialogDismissed()
             }.onFailure { error ->
                 _uiState.value = _uiState.value.copy(
@@ -77,11 +85,14 @@ class AddressViewModel(
 
     fun onDeleteAddressClicked(addressId: String) {
         viewModelScope.launch {
-            addressRepository.deleteAddress(addressId).onFailure { error ->
-                _uiState.value = _uiState.value.copy(
-                    errorMessage = error.message ?: "Failed to delete address"
-                )
-            }
+            addressRepository.deleteAddress(addressId)
+                .onSuccess {
+                    loadAddresses()
+                }.onFailure { error ->
+                    _uiState.value = _uiState.value.copy(
+                        errorMessage = error.message ?: "Failed to delete address"
+                    )
+                }
         }
     }
 
