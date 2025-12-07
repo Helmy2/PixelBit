@@ -1,4 +1,4 @@
-package com.example.pixelbit.presentation.features.products
+package com.example.pixelbit.presentation.features.category
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -6,6 +6,7 @@ import com.example.pixelbit.domain.model.Product
 import com.example.pixelbit.domain.repository.CartRepository
 import com.example.pixelbit.domain.repository.FavoritesRepository
 import com.example.pixelbit.domain.repository.ShopRepository
+import com.example.pixelbit.presentation.navigation.AppNavigator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,18 +15,19 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-data class ProductsState(
+data class CategoryDetailsState(
     val products: List<Product> = emptyList(),
     val isLoading: Boolean = false,
 )
 
-class ProductsViewModel(
+class CategoryDetailsViewModel(
     private val shopRepository: ShopRepository,
     private val favoritesRepository: FavoritesRepository,
-    private val cartRepository: CartRepository
+    private val cartRepository: CartRepository,
+    private val navigator: AppNavigator
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(ProductsState())
+    private val _state = MutableStateFlow(CategoryDetailsState())
     val state = _state.asStateFlow()
 
     private var productsJob: Job? = null
@@ -90,5 +92,9 @@ class ProductsViewModel(
                 e.printStackTrace()
             }
         }
+    }
+
+    fun onBackClick() {
+        navigator.back()
     }
 }

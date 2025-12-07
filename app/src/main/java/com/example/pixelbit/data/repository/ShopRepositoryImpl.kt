@@ -49,7 +49,7 @@ class ShopRepositoryImpl(
                     val products = snapshot?.documents?.mapNotNull { doc ->
                         try {
                             Product(
-                                id = doc.id,
+                                id = doc.getString("id")!!,
                                 title = doc.getString("title") ?: "",
                                 category = doc.getString("category") ?: "",
                                 brand = doc.getString("brand") ?: "",
@@ -137,7 +137,7 @@ class ShopRepositoryImpl(
                     val products = snapshot?.documents?.mapNotNull { doc ->
                         try {
                             Product(
-                                id = doc.id,
+                                id = doc.getString("id")!!,
                                 title = doc.getString("title") ?: "",
                                 category = doc.getString("category") ?: "",
                                 brand = doc.getString("brand") ?: "",

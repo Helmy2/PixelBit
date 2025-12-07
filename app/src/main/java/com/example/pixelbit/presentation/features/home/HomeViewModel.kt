@@ -10,29 +10,40 @@ import com.example.pixelbit.domain.repository.AuthRepository
 import com.example.pixelbit.domain.repository.CartRepository
 import com.example.pixelbit.domain.repository.FavoritesRepository
 import com.example.pixelbit.domain.repository.ShopRepository
+import com.example.pixelbit.presentation.navigation.AppNavigator
+import com.example.pixelbit.presentation.navigation.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-
-data class HomeState(
-    val user: User? = null,
-    val products: List<Product> = emptyList(),
-    val categories: List<Category> = emptyList(),
-    val banners: List<Banner> = emptyList(),
-    val isLoading: Boolean = false,
-    val isRefreshing: Boolean = false,
-    val selectedTabIndex: Int = 0
-)
 
 class HomeViewModel(
     private val shopRepository: ShopRepository,
     private val authRepository: AuthRepository,
     private val favoritesRepository: FavoritesRepository,
-    private val cartRepository: CartRepository
+    private val cartRepository: CartRepository,
+    private val navController: AppNavigator
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(HomeState())
-    val state = _state.asStateFlow()
+    private val _user = MutableStateFlow<User?>(null)
+    val user = _user.asStateFlow()
+
+    private val _products = MutableStateFlow<List<Product>>(emptyList())
+    val products = _products.asStateFlow()
+
+    private val _categories = MutableStateFlow<List<Category>>(emptyList())
+    val categories = _categories.asStateFlow()
+
+    private val _banners = MutableStateFlow<List<Banner>>(emptyList())
+    val banners = _banners.asStateFlow()
+
+    private val _loading = MutableStateFlow(false)
+    val loading = _loading.asStateFlow()
+
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing = _isRefreshing.asStateFlow()
+
+    private val _selectedTabIndex = MutableStateFlow(0)
+    val selectedTabIndex = _selectedTabIndex.asStateFlow()
 
     init {
         loadData()
@@ -40,38 +51,48 @@ class HomeViewModel(
 
     fun loadData(isRefresh: Boolean = false) {
         viewModelScope.launch {
-            _state.value = _state.value.copy(isRefreshing = isRefresh, isLoading = !isRefresh)
+            if (isRefresh) {
+                _isRefreshing.value = true
+            } else {
+                _loading.value = true
+            }
             try {
                 launch {
                     shopRepository.getProducts().collect {
-                        _state.value = _state.value.copy(products = it)
+                        _products.value = it
                     }
                 }
 
                 val user = authRepository.getCurrentUser()
                 val categoriesResult = shopRepository.getCategories()
                 val bannersResult = shopRepository.getBanners()
-                _state.value = _state.value.copy(
-                    categories = categoriesResult,
-                    banners = bannersResult,
-                    user = user
-                )
+                _categories.value = categoriesResult
+                _banners.value = bannersResult
+                _user.value = user
             } catch (e: Exception) {
                 e.printStackTrace()
             } finally {
-                _state.value = _state.value.copy(isRefreshing = false, isLoading = false)
+                if (isRefresh) {
+                    _isRefreshing.value = false
+                } else {
+                    _loading.value = false
+                }
             }
         }
     }
 
-    fun onTabSelected(index: Int) {
-        _state.value = _state.value.copy(selectedTabIndex = index)
+    fun onCategoryClick(id: String) {
+        navController.add(Screen.CategoryDetails(id))
+    }
+
+    fun onSelectTab(index: Int) {
+        _selectedTabIndex.value = index
     }
 
     fun toggleFavorite(productId: String) {
         viewModelScope.launch {
             var wasFavorite = true
-            val currentProducts = _state.value.products.map {
+            val currentProducts = _products.value.map {
                 if (it.id == productId) {
                     wasFavorite = it.isFavorite
                     it.copy(isFavorite = !it.isFavorite)
@@ -79,7 +100,7 @@ class HomeViewModel(
                     it
                 }
             }
-            _state.value = _state.value.copy(products = currentProducts)
+            _products.value = currentProducts
 
             try {
                 val product = currentProducts.first { it.id == productId }
@@ -89,13 +110,13 @@ class HomeViewModel(
                     favoritesRepository.addToFavorites(product.id)
                 }
             } catch (e: Exception) {
-                _state.value = _state.value.copy(products = _state.value.products.map {
+                _products.value = _products.value.map {
                     if (it.id == productId) {
                         it.copy(isFavorite = !it.isFavorite)
                     } else {
                         it
                     }
-                })
+                }
                 e.printStackTrace()
             }
         }

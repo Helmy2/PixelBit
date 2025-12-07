@@ -24,12 +24,12 @@ import com.example.pixelbit.presentation.features.auth.login.LoginScreen
 import com.example.pixelbit.presentation.features.auth.signup.SignUpScreen
 import com.example.pixelbit.presentation.features.auth.verification.VerificationScreen
 import com.example.pixelbit.presentation.features.cart.CartScreen
+import com.example.pixelbit.presentation.features.category.CategoryDetailsScreen
 import com.example.pixelbit.presentation.features.checkout.CheckoutScreen
 import com.example.pixelbit.presentation.features.favorites.FavoritesScreen
 import com.example.pixelbit.presentation.features.home.HomeScreen
 import com.example.pixelbit.presentation.features.myorders.MyOrdersScreen
 import com.example.pixelbit.presentation.features.onboarding.OnboardingScreen
-import com.example.pixelbit.presentation.features.products.ProductsScreen
 import com.example.pixelbit.presentation.features.profile.ProfileScreen
 
 @Composable
@@ -144,15 +144,12 @@ fun NavGraph(
                 }
 
                 entry<Screen.Home> {
-                    HomeScreen(onCategoryClick = { category ->
-                        navController.add(Screen.Products(category))
-                    })
+                    HomeScreen()
                 }
 
-                entry<Screen.Products> {
-                    ProductsScreen(
-                        categoryName = it.category,
-                        onBackClick = { navController.back() }
+                entry<Screen.CategoryDetails> {
+                    CategoryDetailsScreen(
+                        categoryName = it.id,
                     )
                 }
 

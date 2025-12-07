@@ -28,12 +28,12 @@ import com.example.pixelbit.presentation.features.auth.login.LoginViewModel
 import com.example.pixelbit.presentation.features.auth.signup.SignUpViewModel
 import com.example.pixelbit.presentation.features.auth.verification.VerificationViewModel
 import com.example.pixelbit.presentation.features.cart.CartViewModel
+import com.example.pixelbit.presentation.features.category.CategoryDetailsViewModel
 import com.example.pixelbit.presentation.features.checkout.CheckoutViewModel
 import com.example.pixelbit.presentation.features.favorites.FavoritesViewModel
 import com.example.pixelbit.presentation.features.home.HomeViewModel
 import com.example.pixelbit.presentation.features.myorders.MyOrdersViewModel
 import com.example.pixelbit.presentation.features.onboarding.OnboardingViewModel
-import com.example.pixelbit.presentation.features.products.ProductsViewModel
 import com.example.pixelbit.presentation.features.profile.ProfileViewModel
 import com.example.pixelbit.presentation.navigation.AppNavigator
 import com.google.firebase.auth.FirebaseAuth
@@ -78,5 +78,5 @@ val appModule = module {
     viewModelOf(::CheckoutViewModel)
     viewModelOf(::MyOrdersViewModel)
     viewModelOf(::AddressViewModel)
-    viewModelOf(::ProductsViewModel)
+    viewModelOf(::CategoryDetailsViewModel)
 }

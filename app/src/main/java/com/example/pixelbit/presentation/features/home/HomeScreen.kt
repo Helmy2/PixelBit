@@ -58,21 +58,28 @@ import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun HomeScreen(viewModel: HomeViewModel = koinViewModel(), onCategoryClick: (String) -> Unit) {
+fun HomeScreen(viewModel: HomeViewModel = koinViewModel()) {
 
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val user by viewModel.user.collectAsStateWithLifecycle()
+    val products by viewModel.products.collectAsStateWithLifecycle()
+    val categories by viewModel.categories.collectAsStateWithLifecycle()
+    val banners by viewModel.banners.collectAsStateWithLifecycle()
+    val isLoading by viewModel.loading.collectAsStateWithLifecycle()
+    val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
+    val selectedTabIndex by viewModel.selectedTabIndex.collectAsStateWithLifecycle()
 
     Scaffold(
-        topBar = { HomeTopBar(state.user) }, contentWindowInsets = WindowInsets()
+        topBar = { HomeTopBar(user) }, contentWindowInsets = WindowInsets()
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues)) {
             HomeTabs(
-                selectedIndex = state.selectedTabIndex,
-                onTabSelected = { viewModel.onTabSelected(it) })
+                selectedIndex = selectedTabIndex,
+                onTabSelected = viewModel::onSelectTab
+            )
 
             PullToRefreshBox(
-                isRefreshing = state.isRefreshing, onRefresh = { viewModel.loadData(true) }) {
-                if (state.isLoading) {
+                isRefreshing = isRefreshing, onRefresh = { viewModel.loadData(true) }) {
+                if (isLoading) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         CircularProgressIndicator()
                     }
@@ -87,8 +94,8 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel(), onCategoryClick: (Str
                         horizontalArrangement = Arrangement.spacedBy(16.dp),
                         verticalItemSpacing = 24.dp
                     ) {
-                        if (state.selectedTabIndex == 0) {
-                            item(span = StaggeredGridItemSpan.FullLine) { HomeBanner(state.banners) }
+                        if (selectedTabIndex == 0) {
+                            item(span = StaggeredGridItemSpan.FullLine) { HomeBanner(banners) }
 
                             item(span = StaggeredGridItemSpan.FullLine) {
                                 Row(
@@ -111,22 +118,22 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel(), onCategoryClick: (Str
                                 }
                             }
 
-                            items(state.products.take(10)) { product ->
+                            items(products.take(10)) { product ->
                                 ProductItem(
                                     product = product,
                                     onFavoriteClick = { viewModel.toggleFavorite(it) },
-                                    onAddToCart = { viewModel.addToCart(product) }
+                                    onAddToCart = { viewModel.addToCart(it) }
                                 )
                             }
 
                         } else {
                             itemsIndexed(
-                                state.categories,
+                                categories,
                                 span = { _, _ -> StaggeredGridItemSpan.FullLine }) { index, category ->
                                 CategoryItem(
                                     category = category, 
-                                    index = index, 
-                                    onCategoryClick = onCategoryClick
+                                    index = index,
+                                    onCategoryClick = viewModel::onCategoryClick
                                 )
                             }
                         }
