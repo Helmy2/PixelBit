@@ -48,6 +48,9 @@ sealed class Screen {
 
     @Serializable
     data object Address : Screen()
+
+    @Serializable
+    data class CategoryDetails(val id: String) : Screen()
 }
 
 data class TopLevelDestination(

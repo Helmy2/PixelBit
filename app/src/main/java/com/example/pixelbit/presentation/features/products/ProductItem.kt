@@ -1,4 +1,4 @@
-package com.example.pixelbit.presentation.features.home
+package com.example.pixelbit.presentation.features.products
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

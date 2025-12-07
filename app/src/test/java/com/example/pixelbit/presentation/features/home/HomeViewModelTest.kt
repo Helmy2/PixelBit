@@ -9,6 +9,7 @@ import com.example.pixelbit.domain.repository.AuthRepository
 import com.example.pixelbit.domain.repository.CartRepository
 import com.example.pixelbit.domain.repository.FavoritesRepository
 import com.example.pixelbit.domain.repository.ShopRepository
+import com.example.pixelbit.presentation.navigation.AppNavigator
 import com.google.common.truth.Truth.assertThat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -33,6 +34,7 @@ class HomeViewModelTest {
     private val authRepository: AuthRepository = mock()
     private val favoritesRepository: FavoritesRepository = mock()
     private val cartRepository: CartRepository = mock()
+    private val navController: AppNavigator = mock()
     private val testDispatcher = StandardTestDispatcher()
 
     private val mockUser = User(uid = "1", email = "test@example.com", name = "Test User")
@@ -81,7 +83,13 @@ class HomeViewModelTest {
     @Test
     fun `test initial state`() {
         viewModel =
-            HomeViewModel(shopRepository, authRepository, favoritesRepository, cartRepository)
+            HomeViewModel(
+                shopRepository,
+                authRepository,
+                favoritesRepository,
+                cartRepository,
+                navController
+            )
 
         assertThat(viewModel.user.value).isNull()
         assertThat(viewModel.products.value).isEmpty()
@@ -103,7 +111,13 @@ class HomeViewModelTest {
         whenever(authRepository.getCurrentUser()).thenReturn(mockUser)
 
         viewModel =
-            HomeViewModel(shopRepository, authRepository, favoritesRepository, cartRepository)
+            HomeViewModel(
+                shopRepository,
+                authRepository,
+                favoritesRepository,
+                cartRepository,
+                navController
+            )
         testDispatcher.scheduler.advanceUntilIdle()
 
         assertThat(viewModel.products.value).isEqualTo(products)
@@ -119,7 +133,13 @@ class HomeViewModelTest {
         whenever(shopRepository.getProducts()).thenReturn(flowOf(products))
 
         viewModel =
-            HomeViewModel(shopRepository, authRepository, favoritesRepository, cartRepository)
+            HomeViewModel(
+                shopRepository,
+                authRepository,
+                favoritesRepository,
+                cartRepository,
+                navController
+            )
 
         viewModel.loading.test {
             assertThat(awaitItem()).isFalse() // Initial state
@@ -137,7 +157,13 @@ class HomeViewModelTest {
         whenever(shopRepository.getProducts()).thenReturn(flowOf(products))
 
         viewModel =
-            HomeViewModel(shopRepository, authRepository, favoritesRepository, cartRepository)
+            HomeViewModel(
+                shopRepository,
+                authRepository,
+                favoritesRepository,
+                cartRepository,
+                navController
+            )
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.isRefreshing.test {
@@ -157,7 +183,13 @@ class HomeViewModelTest {
         whenever(shopRepository.getProducts()).thenReturn(flowOf(products))
 
         viewModel =
-            HomeViewModel(shopRepository, authRepository, favoritesRepository, cartRepository)
+            HomeViewModel(
+                shopRepository,
+                authRepository,
+                favoritesRepository,
+                cartRepository,
+                navController
+            )
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.toggleFavorite(mockProduct1.id)
@@ -174,7 +206,13 @@ class HomeViewModelTest {
         whenever(shopRepository.getProducts()).thenReturn(flowOf(products))
 
         viewModel =
-            HomeViewModel(shopRepository, authRepository, favoritesRepository, cartRepository)
+            HomeViewModel(
+                shopRepository,
+                authRepository,
+                favoritesRepository,
+                cartRepository,
+                navController
+            )
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.toggleFavorite(mockProduct2.id)
@@ -192,7 +230,13 @@ class HomeViewModelTest {
         whenever(favoritesRepository.addToFavorites(any())).thenThrow(RuntimeException("Network error"))
 
         viewModel =
-            HomeViewModel(shopRepository, authRepository, favoritesRepository, cartRepository)
+            HomeViewModel(
+                shopRepository,
+                authRepository,
+                favoritesRepository,
+                cartRepository,
+                navController
+            )
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.toggleFavorite(mockProduct1.id)
@@ -208,7 +252,13 @@ class HomeViewModelTest {
         whenever(shopRepository.getProducts()).thenReturn(flowOf(products))
 
         viewModel =
-            HomeViewModel(shopRepository, authRepository, favoritesRepository, cartRepository)
+            HomeViewModel(
+                shopRepository,
+                authRepository,
+                favoritesRepository,
+                cartRepository,
+                navController
+            )
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.products.test {
@@ -230,7 +280,13 @@ class HomeViewModelTest {
         whenever(shopRepository.getProducts()).thenReturn(flowOf(products))
 
         viewModel =
-            HomeViewModel(shopRepository, authRepository, favoritesRepository, cartRepository)
+            HomeViewModel(
+                shopRepository,
+                authRepository,
+                favoritesRepository,
+                cartRepository,
+                navController
+            )
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.toggleFavorite(mockProduct1.id)
@@ -249,7 +305,13 @@ class HomeViewModelTest {
         whenever(shopRepository.getProducts()).thenReturn(flowOf(products))
 
         viewModel =
-            HomeViewModel(shopRepository, authRepository, favoritesRepository, cartRepository)
+            HomeViewModel(
+                shopRepository,
+                authRepository,
+                favoritesRepository,
+                cartRepository,
+                navController
+            )
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.addToCart(mockProduct1)
@@ -273,7 +335,13 @@ class HomeViewModelTest {
         )
 
         viewModel =
-            HomeViewModel(shopRepository, authRepository, favoritesRepository, cartRepository)
+            HomeViewModel(
+                shopRepository,
+                authRepository,
+                favoritesRepository,
+                cartRepository,
+                navController
+            )
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.addToCart(mockProduct1)
@@ -290,7 +358,13 @@ class HomeViewModelTest {
         whenever(authRepository.getCurrentUser()).thenReturn(null)
 
         viewModel =
-            HomeViewModel(shopRepository, authRepository, favoritesRepository, cartRepository)
+            HomeViewModel(
+                shopRepository,
+                authRepository,
+                favoritesRepository,
+                cartRepository,
+                navController
+            )
         testDispatcher.scheduler.advanceUntilIdle()
 
         assertThat(viewModel.user.value).isNull()
@@ -303,7 +377,13 @@ class HomeViewModelTest {
         whenever(shopRepository.getProducts()).thenReturn(flowOf(products))
 
         viewModel =
-            HomeViewModel(shopRepository, authRepository, favoritesRepository, cartRepository)
+            HomeViewModel(
+                shopRepository,
+                authRepository,
+                favoritesRepository,
+                cartRepository,
+                navController
+            )
         testDispatcher.scheduler.advanceUntilIdle()
 
         viewModel.loadData(isRefresh = true)

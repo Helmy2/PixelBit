@@ -38,9 +38,6 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,6 +54,7 @@ import com.example.pixelbit.R
 import com.example.pixelbit.domain.model.Banner
 import com.example.pixelbit.domain.model.User
 import com.example.pixelbit.presentation.features.category.CategoryItem
+import com.example.pixelbit.presentation.features.products.ProductItem
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 
@@ -69,8 +67,7 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel(),onProductClick: (Strin
     val banners by viewModel.banners.collectAsStateWithLifecycle()
     val isLoading by viewModel.loading.collectAsStateWithLifecycle()
     val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
-
-    var selectedTabIndex by remember { mutableStateOf(0) }
+    val selectedTabIndex by viewModel.selectedTabIndex.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = { HomeTopBar(user) }, contentWindowInsets = WindowInsets()
@@ -78,7 +75,8 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel(),onProductClick: (Strin
         Column(modifier = Modifier.padding(paddingValues)) {
             HomeTabs(
                 selectedIndex = selectedTabIndex,
-                onTabSelected = { index -> selectedTabIndex = index })
+                onTabSelected = viewModel::onSelectTab
+            )
 
             PullToRefreshBox(
                 isRefreshing = isRefreshing, onRefresh = { viewModel.loadData(true) }) {
@@ -134,7 +132,11 @@ fun HomeScreen(viewModel: HomeViewModel = koinViewModel(),onProductClick: (Strin
                             itemsIndexed(
                                 categories,
                                 span = { _, _ -> StaggeredGridItemSpan.FullLine }) { index, category ->
-                                CategoryItem(category = category, index = index)
+                                CategoryItem(
+                                    category = category, 
+                                    index = index,
+                                    onCategoryClick = viewModel::onCategoryClick
+                                )
                             }
                         }
                     }
